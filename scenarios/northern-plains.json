@@ -1,0 +1,784 @@
+{
+  "id": "northern-plains",
+  "name": "Northern Plains",
+  "version": "1.0.0",
+  "scale": "Regional, 14 days",
+  "description": "The Dravic Federation drives south across the open plains of Tessaria toward the Hesk corridor. The Commonwealth of Lysa must hold with combined arms, drones and fragile supply lines.",
+  "teachingFocus": "Combined arms, logistics, attritable drones",
+  "domains": [
+    "LAND",
+    "AIR",
+    "DRONE"
+  ],
+  "durationH": 336,
+  "map": {
+    "kind": "fictional",
+    "bbox": [
+      -116,
+      -48,
+      -92,
+      -30
+    ],
+    "center": [
+      -39.5,
+      -104
+    ],
+    "zoom": 4.6,
+    "land": [
+      {
+        "name": "Tessaria",
+        "ring": [
+          [
+            -96.547,
+            -39.5
+          ],
+          [
+            -97.578,
+            -38.313
+          ],
+          [
+            -97.593,
+            -36.978
+          ],
+          [
+            -97.412,
+            -35.122
+          ],
+          [
+            -98.326,
+            -33.335
+          ],
+          [
+            -100.447,
+            -32.473
+          ],
+          [
+            -102.88,
+            -32.581
+          ],
+          [
+            -105.042,
+            -33.067
+          ],
+          [
+            -106.948,
+            -33.67
+          ],
+          [
+            -108.517,
+            -34.592
+          ],
+          [
+            -109.572,
+            -35.798
+          ],
+          [
+            -110.517,
+            -36.935
+          ],
+          [
+            -112.022,
+            -38.017
+          ],
+          [
+            -113.747,
+            -39.5
+          ],
+          [
+            -114.278,
+            -41.4
+          ],
+          [
+            -112.823,
+            -42.973
+          ],
+          [
+            -110.286,
+            -43.677
+          ],
+          [
+            -108.097,
+            -43.951
+          ],
+          [
+            -106.546,
+            -44.535
+          ],
+          [
+            -104.953,
+            -45.387
+          ],
+          [
+            -102.968,
+            -45.872
+          ],
+          [
+            -100.849,
+            -45.731
+          ],
+          [
+            -98.747,
+            -45.208
+          ],
+          [
+            -96.697,
+            -44.352
+          ],
+          [
+            -95.287,
+            -42.93
+          ],
+          [
+            -95.322,
+            -41.104
+          ],
+          [
+            -96.547,
+            -39.5
+          ]
+        ]
+      }
+    ],
+    "cities": [
+      {
+        "name": "Hesk",
+        "at": [
+          -40.2,
+          -104.5
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Lysa",
+        "at": [
+          -44,
+          -105
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Dravograd",
+        "at": [
+          -35,
+          -103
+        ],
+        "faction": "RED"
+      },
+      {
+        "name": "Orlen",
+        "at": [
+          -37.2,
+          -100.5
+        ],
+        "faction": "RED"
+      }
+    ],
+    "chokepoints": []
+  },
+  "factions": [
+    {
+      "id": "BLUE",
+      "name": "Commonwealth of Lysa",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "B1",
+          "name": "Hold the Hesk corridor",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -40.2,
+            -104.5
+          ],
+          "radiusKm": 40,
+          "weight": 2
+        },
+        {
+          "id": "B2",
+          "name": "Protect Lysa",
+          "kind": "DENY",
+          "domain": "LAND",
+          "center": [
+            -44,
+            -105
+          ],
+          "radiusKm": 60,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "RED",
+      "name": "Dravic Federation",
+      "will": 68,
+      "objectives": [
+        {
+          "id": "R1",
+          "name": "Seize the Hesk corridor",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -40.2,
+            -104.5
+          ],
+          "radiusKm": 40,
+          "weight": 2
+        },
+        {
+          "id": "R2",
+          "name": "Destroy forces in the Orlen salient",
+          "kind": "DESTROY",
+          "domain": "LAND",
+          "center": [
+            -38.4,
+            -101.5
+          ],
+          "radiusKm": 50,
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "orbat": [
+    {
+      "faction": "BLUE",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -43,
+        -105
+      ],
+      "callsign": "LYSA-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -44.5,
+        -103
+      ],
+      "callsign": "LYSA-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "armored_bde",
+      "count": 2,
+      "at": [
+        -40.8,
+        -105.5
+      ],
+      "callsign": "STEEL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mech_inf_bde",
+      "count": 3,
+      "at": [
+        -40.6,
+        -103.5
+      ],
+      "callsign": "GUARD",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "light_inf_bde",
+      "count": 2,
+      "at": [
+        -39.9,
+        -104.6
+      ],
+      "callsign": "HILL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "artillery_bn",
+      "count": 3,
+      "at": [
+        -41.2,
+        -104.5
+      ],
+      "callsign": "BOOM",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "shorad_bn",
+      "count": 3,
+      "at": [
+        -40.9,
+        -104.4
+      ],
+      "callsign": "UMBRELLA",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "lrad_bn",
+      "count": 1,
+      "at": [
+        -42,
+        -104.8
+      ],
+      "callsign": "CANOPY",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "engineer_bn",
+      "count": 2,
+      "at": [
+        -40.7,
+        -104
+      ],
+      "callsign": "SAPPER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "log_convoy",
+      "count": 5,
+      "at": [
+        -42.2,
+        -104.9
+      ],
+      "callsign": "CART",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ew_bn",
+      "count": 1,
+      "at": [
+        -40.9,
+        -104.9
+      ],
+      "callsign": "HUM",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ugv",
+      "count": 3,
+      "at": [
+        -40.4,
+        -104.3
+      ],
+      "callsign": "MULEBOT",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_as",
+      "count": 3,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "EAGLE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_mr",
+      "count": 3,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "FALCO",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "aewc",
+      "count": 1,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "LOOKOUT",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "tanker",
+      "count": 1,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "STRAW",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "airlifter",
+      "count": 1,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "DRAFT",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "helo",
+      "count": 3,
+      "at": [
+        -41.5,
+        -104.6
+      ],
+      "callsign": "WARHORSE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "hale_isr",
+      "count": 1,
+      "at": [
+        -43.5,
+        -106
+      ],
+      "callsign": "SENTINEL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "male_drone",
+      "count": 4,
+      "at": [
+        -42,
+        -104
+      ],
+      "callsign": "WATCHER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "loitering_munition",
+      "count": 4,
+      "at": [
+        -41,
+        -104.2
+      ],
+      "callsign": "STINGER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "quad_swarm",
+      "count": 3,
+      "at": [
+        -40.6,
+        -104
+      ],
+      "callsign": "BEE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -35.6,
+        -103
+      ],
+      "callsign": "DRAV-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -34,
+        -101.5
+      ],
+      "callsign": "DRAV-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "armored_bde",
+      "count": 3,
+      "at": [
+        -37.6,
+        -104.4
+      ],
+      "callsign": "TANK",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "mech_inf_bde",
+      "count": 4,
+      "at": [
+        -37.9,
+        -103
+      ],
+      "callsign": "MARCH",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -38.3,
+        -101.4
+      ],
+      "callsign": "SCOUT",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "artillery_bn",
+      "count": 4,
+      "at": [
+        -37.2,
+        -103.6
+      ],
+      "callsign": "GROM",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "shorad_bn",
+      "count": 3,
+      "at": [
+        -37.6,
+        -103.4
+      ],
+      "callsign": "NET",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "lrad_bn",
+      "count": 2,
+      "at": [
+        -36.5,
+        -103.2
+      ],
+      "callsign": "VAULT",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "engineer_bn",
+      "count": 1,
+      "at": [
+        -37.8,
+        -103.8
+      ],
+      "callsign": "DIGGER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "log_convoy",
+      "count": 5,
+      "at": [
+        -36.4,
+        -103.4
+      ],
+      "callsign": "YAK",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ew_bn",
+      "count": 2,
+      "at": [
+        -37.6,
+        -103.8
+      ],
+      "callsign": "BUZZ",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "decoy_group",
+      "count": 3,
+      "at": [
+        -37.9,
+        -104.8
+      ],
+      "callsign": "GHOSTTANK",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_as",
+      "count": 3,
+      "at": [
+        -34.8,
+        -104.2
+      ],
+      "callsign": "BLACKJACK",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_mr",
+      "count": 4,
+      "at": [
+        -34.8,
+        -104.2
+      ],
+      "callsign": "FENCER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "aewc",
+      "count": 1,
+      "at": [
+        -34.8,
+        -104.2
+      ],
+      "callsign": "BEACON",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "helo",
+      "count": 3,
+      "at": [
+        -36.9,
+        -103.6
+      ],
+      "callsign": "HAVOC",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "male_drone",
+      "count": 4,
+      "at": [
+        -36,
+        -103
+      ],
+      "callsign": "FORPOST",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "loitering_munition",
+      "count": 6,
+      "at": [
+        -37.4,
+        -103.4
+      ],
+      "callsign": "CUBE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "quad_swarm",
+      "count": 5,
+      "at": [
+        -37.6,
+        -103.6
+      ],
+      "callsign": "MOSQUITO",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "ugv",
+      "count": 2,
+      "at": [
+        -37.7,
+        -104
+      ],
+      "callsign": "IRONDOG",
+      "spreadKm": 15
+    }
+  ],
+  "space": [
+    {
+      "faction": "BLUE",
+      "cls": "leo_imaging",
+      "planes": 1,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 0,
+      "callsign": "LEYE"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_imaging",
+      "planes": 1,
+      "perPlane": 2,
+      "altKm": 560,
+      "incDeg": 97.6,
+      "raanDeg": 90,
+      "callsign": "DEYE"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -104,
+      "callsign": "LCOM"
+    },
+    {
+      "faction": "RED",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -100,
+      "callsign": "DCOM"
+    }
+  ],
+  "environment": {
+    "seaState": "calm",
+    "fronts": 3,
+    "startHourUtc": 5
+  },
+  "rules": {
+    "startEscalation": 3,
+    "tickMs": 60000
+  },
+  "injects": [
+    {
+      "atH": 36,
+      "kind": "STORM",
+      "text": "Spring storms turn the plains to mud.",
+      "at": [
+        -39,
+        -104
+      ]
+    },
+    {
+      "atH": 96,
+      "kind": "REINFORCE",
+      "text": "A Commonwealth reserve brigade arrives at Lysa.",
+      "faction": "BLUE",
+      "at": [
+        -43.6,
+        -105.2
+      ],
+      "target": "mech_inf_bde"
+    },
+    {
+      "atH": 200,
+      "kind": "CEASEFIRE_OFFER",
+      "text": "Regional powers call for a ceasefire."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@sentinel/tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen:scenarios": "node gen-scenarios.mjs",
+    "bench": "vitest run --config vitest.bench.config.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "echo 'tools: no unit tests'"
+  }
+}

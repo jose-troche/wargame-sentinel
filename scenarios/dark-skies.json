@@ -1,0 +1,961 @@
+{
+  "id": "dark-skies",
+  "name": "Dark Skies",
+  "version": "1.0.0",
+  "scale": "Global, 7 days",
+  "description": "A global confrontation between two distant continental powers opens in space and cyberspace. Fight with degraded navigation, communications and ISR while task groups race to the Halcyon Rise.",
+  "teachingFocus": "Fighting with degraded PNT, comms and ISR",
+  "domains": [
+    "SPACE",
+    "SEA",
+    "AIR",
+    "LAND",
+    "DRONE"
+  ],
+  "durationH": 168,
+  "map": {
+    "kind": "fictional",
+    "bbox": [
+      -150,
+      -55,
+      110,
+      -25
+    ],
+    "center": [
+      -40,
+      -20
+    ],
+    "zoom": 1.6,
+    "land": [
+      {
+        "name": "Aurelia",
+        "owner": "BLUE",
+        "ring": [
+          [
+            -127.338,
+            -38
+          ],
+          [
+            -127.779,
+            -36.665
+          ],
+          [
+            -129.16,
+            -35.701
+          ],
+          [
+            -130.796,
+            -35.207
+          ],
+          [
+            -131.926,
+            -34.66
+          ],
+          [
+            -132.758,
+            -33.566
+          ],
+          [
+            -134.078,
+            -32.308
+          ],
+          [
+            -136,
+            -31.823
+          ],
+          [
+            -137.803,
+            -32.458
+          ],
+          [
+            -139.002,
+            -33.652
+          ],
+          [
+            -139.843,
+            -34.782
+          ],
+          [
+            -140.591,
+            -35.799
+          ],
+          [
+            -141.044,
+            -36.883
+          ],
+          [
+            -141.098,
+            -38
+          ],
+          [
+            -141.14,
+            -39.135
+          ],
+          [
+            -141.344,
+            -40.497
+          ],
+          [
+            -141.096,
+            -42.05
+          ],
+          [
+            -139.743,
+            -43.153
+          ],
+          [
+            -137.637,
+            -43.216
+          ],
+          [
+            -135.737,
+            -42.553
+          ],
+          [
+            -134.342,
+            -42.067
+          ],
+          [
+            -132.923,
+            -42.107
+          ],
+          [
+            -131.185,
+            -42.145
+          ],
+          [
+            -129.544,
+            -41.625
+          ],
+          [
+            -128.407,
+            -40.595
+          ],
+          [
+            -127.684,
+            -39.352
+          ],
+          [
+            -127.338,
+            -38
+          ]
+        ]
+      },
+      {
+        "name": "Khoros",
+        "owner": "RED",
+        "ring": [
+          [
+            102.158,
+            -38
+          ],
+          [
+            100.859,
+            -36.917
+          ],
+          [
+            99.711,
+            -36.146
+          ],
+          [
+            99.294,
+            -35.147
+          ],
+          [
+            98.972,
+            -33.684
+          ],
+          [
+            97.847,
+            -32.369
+          ],
+          [
+            95.978,
+            -31.96
+          ],
+          [
+            94.1,
+            -32.44
+          ],
+          [
+            92.578,
+            -33.21
+          ],
+          [
+            91.286,
+            -33.965
+          ],
+          [
+            90.253,
+            -34.846
+          ],
+          [
+            89.647,
+            -35.893
+          ],
+          [
+            89.196,
+            -36.927
+          ],
+          [
+            88.398,
+            -38
+          ],
+          [
+            87.499,
+            -39.387
+          ],
+          [
+            87.527,
+            -40.942
+          ],
+          [
+            88.995,
+            -41.99
+          ],
+          [
+            91.155,
+            -42.177
+          ],
+          [
+            92.968,
+            -42.018
+          ],
+          [
+            94.319,
+            -42.205
+          ],
+          [
+            95.758,
+            -42.684
+          ],
+          [
+            97.457,
+            -42.86
+          ],
+          [
+            99.103,
+            -42.458
+          ],
+          [
+            100.552,
+            -41.689
+          ],
+          [
+            101.831,
+            -40.689
+          ],
+          [
+            102.556,
+            -39.397
+          ],
+          [
+            102.158,
+            -38
+          ]
+        ]
+      },
+      {
+        "name": "Halcyon Rise",
+        "ring": [
+          [
+            -24.447,
+            -42
+          ],
+          [
+            -24.447,
+            -41.833
+          ],
+          [
+            -24.5,
+            -41.608
+          ],
+          [
+            -24.835,
+            -41.548
+          ],
+          [
+            -25.15,
+            -41.59
+          ],
+          [
+            -25.376,
+            -41.705
+          ],
+          [
+            -25.558,
+            -41.832
+          ],
+          [
+            -25.823,
+            -42
+          ],
+          [
+            -25.686,
+            -42.207
+          ],
+          [
+            -25.357,
+            -42.28
+          ],
+          [
+            -25.141,
+            -42.386
+          ],
+          [
+            -24.844,
+            -42.428
+          ],
+          [
+            -24.518,
+            -42.378
+          ],
+          [
+            -24.318,
+            -42.205
+          ],
+          [
+            -24.447,
+            -42
+          ]
+        ]
+      }
+    ],
+    "cities": [
+      {
+        "name": "Aurel",
+        "at": [
+          -38,
+          -134
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Khor",
+        "at": [
+          -38,
+          96
+        ],
+        "faction": "RED"
+      }
+    ],
+    "chokepoints": [
+      {
+        "name": "Halcyon Approaches",
+        "at": [
+          -42,
+          -25
+        ],
+        "radiusKm": 200
+      }
+    ]
+  },
+  "factions": [
+    {
+      "id": "BLUE",
+      "name": "Aurelian Federation",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "B1",
+          "name": "Control the Halcyon Rise",
+          "kind": "CONTROL",
+          "domain": "SEA",
+          "center": [
+            -42,
+            -25
+          ],
+          "radiusKm": 220,
+          "weight": 2
+        },
+        {
+          "id": "B2",
+          "name": "Protect Aurelian ground stations",
+          "kind": "DENY",
+          "domain": "LAND",
+          "center": [
+            -39,
+            -137
+          ],
+          "radiusKm": 150,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "RED",
+      "name": "Khoros Directorate",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "R1",
+          "name": "Control the Halcyon Rise",
+          "kind": "CONTROL",
+          "domain": "SEA",
+          "center": [
+            -42,
+            -25
+          ],
+          "radiusKm": 220,
+          "weight": 2
+        },
+        {
+          "id": "R2",
+          "name": "Protect Khoros ground stations",
+          "kind": "DENY",
+          "domain": "LAND",
+          "center": [
+            -39,
+            93
+          ],
+          "radiusKm": 150,
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "orbat": [
+    {
+      "faction": "BLUE",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -38,
+        -135
+      ],
+      "callsign": "AUR-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ground_station",
+      "count": 2,
+      "at": [
+        -39,
+        -137
+      ],
+      "callsign": "AUR-GS",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "launch_site",
+      "count": 1,
+      "at": [
+        -42,
+        -133
+      ],
+      "callsign": "AUR-LS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "cyber_unit",
+      "count": 2,
+      "at": [
+        -38.2,
+        -135.2
+      ],
+      "callsign": "CIPHER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ew_bn",
+      "count": 1,
+      "at": [
+        -38.5,
+        -134
+      ],
+      "callsign": "SCRAMBLE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "lrad_bn",
+      "count": 2,
+      "at": [
+        -38.5,
+        -135.5
+      ],
+      "callsign": "HALO",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "csg",
+      "count": 1,
+      "at": [
+        -44,
+        -60
+      ],
+      "callsign": "INDOMITABLE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_mr",
+      "count": 2,
+      "at": [
+        -44,
+        -60
+      ],
+      "callsign": "CORSAIR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "destroyer",
+      "count": 3,
+      "at": [
+        -43.5,
+        -58
+      ],
+      "callsign": "VANGUARD",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ssn",
+      "count": 2,
+      "at": [
+        -42,
+        -40
+      ],
+      "callsign": "SILENT",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "oiler",
+      "count": 1,
+      "at": [
+        -45,
+        -62
+      ],
+      "callsign": "RIVER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_as",
+      "count": 2,
+      "at": [
+        -38,
+        -133
+      ],
+      "callsign": "ARROW",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "bomber",
+      "count": 2,
+      "at": [
+        -38,
+        -133
+      ],
+      "callsign": "STRATO",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "tanker",
+      "count": 2,
+      "at": [
+        -38,
+        -133
+      ],
+      "callsign": "OASIS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "hale_isr",
+      "count": 2,
+      "at": [
+        -38,
+        -133
+      ],
+      "callsign": "ZENITH",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mpa",
+      "count": 1,
+      "at": [
+        -38,
+        -133
+      ],
+      "callsign": "SEAHAWK",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -38,
+        95
+      ],
+      "callsign": "KHO-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "ground_station",
+      "count": 2,
+      "at": [
+        -39,
+        93
+      ],
+      "callsign": "KHO-GS",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "launch_site",
+      "count": 2,
+      "at": [
+        -41,
+        97
+      ],
+      "callsign": "KHO-LS",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "cyber_unit",
+      "count": 2,
+      "at": [
+        -38.2,
+        95.2
+      ],
+      "callsign": "WORM",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ew_bn",
+      "count": 2,
+      "at": [
+        -38.4,
+        94
+      ],
+      "callsign": "STATICWALL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "lrad_bn",
+      "count": 2,
+      "at": [
+        -38.5,
+        95.5
+      ],
+      "callsign": "BASTION",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "destroyer",
+      "count": 4,
+      "at": [
+        -43,
+        10
+      ],
+      "callsign": "TEMPEST",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "frigate",
+      "count": 2,
+      "at": [
+        -42.5,
+        8
+      ],
+      "callsign": "SPRAY",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ssn",
+      "count": 2,
+      "at": [
+        -42,
+        -10
+      ],
+      "callsign": "ABYSS",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "oiler",
+      "count": 1,
+      "at": [
+        -44,
+        12
+      ],
+      "callsign": "DELTA",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_as",
+      "count": 2,
+      "at": [
+        -38,
+        97
+      ],
+      "callsign": "RAPTOR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "bomber",
+      "count": 3,
+      "at": [
+        -38,
+        97
+      ],
+      "callsign": "THUNDERHEAD",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "tanker",
+      "count": 2,
+      "at": [
+        -38,
+        97
+      ],
+      "callsign": "BARREL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "hale_isr",
+      "count": 2,
+      "at": [
+        -38,
+        97
+      ],
+      "callsign": "NADIR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "mpa",
+      "count": 1,
+      "at": [
+        -38,
+        97
+      ],
+      "callsign": "GULLWING",
+      "spreadKm": 0
+    }
+  ],
+  "space": [
+    {
+      "faction": "BLUE",
+      "cls": "leo_imaging",
+      "planes": 2,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 10,
+      "callsign": "AUEYE"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "leo_sar",
+      "planes": 1,
+      "perPlane": 2,
+      "altKm": 600,
+      "incDeg": 97.4,
+      "raanDeg": 100,
+      "callsign": "AUSAR"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "leo_comms",
+      "planes": 3,
+      "perPlane": 4,
+      "altKm": 560,
+      "incDeg": 53,
+      "raanDeg": 0,
+      "callsign": "AUNET"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "meo_pnt",
+      "planes": 3,
+      "perPlane": 2,
+      "altKm": 20200,
+      "incDeg": 55,
+      "raanDeg": 0,
+      "callsign": "AUNAV"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -130,
+      "callsign": "AUCOM"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "missile_warning",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -138,
+      "callsign": "AUWARN"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_imaging",
+      "planes": 2,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 40,
+      "callsign": "KHEYE"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_sar",
+      "planes": 1,
+      "perPlane": 2,
+      "altKm": 600,
+      "incDeg": 97.4,
+      "raanDeg": 130,
+      "callsign": "KHSAR"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_comms",
+      "planes": 3,
+      "perPlane": 4,
+      "altKm": 560,
+      "incDeg": 53,
+      "raanDeg": 20,
+      "callsign": "KHNET"
+    },
+    {
+      "faction": "RED",
+      "cls": "meo_pnt",
+      "planes": 3,
+      "perPlane": 2,
+      "altKm": 20200,
+      "incDeg": 55,
+      "raanDeg": 60,
+      "callsign": "KHNAV"
+    },
+    {
+      "faction": "RED",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": 95,
+      "callsign": "KHCOM"
+    },
+    {
+      "faction": "RED",
+      "cls": "missile_warning",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": 87,
+      "callsign": "KHWARN"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "leo_comms",
+      "planes": 4,
+      "perPlane": 6,
+      "altKm": 600,
+      "incDeg": 70,
+      "raanDeg": 45,
+      "callsign": "AUWEB"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_comms",
+      "planes": 4,
+      "perPlane": 6,
+      "altKm": 620,
+      "incDeg": 70,
+      "raanDeg": 65,
+      "callsign": "KHWEB"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -30,
+      "callsign": "AUCOM2"
+    },
+    {
+      "faction": "RED",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": 0,
+      "callsign": "KHCOM2"
+    }
+  ],
+  "environment": {
+    "seaState": "rough",
+    "fronts": 4,
+    "startHourUtc": 0
+  },
+  "rules": {
+    "startEscalation": 3,
+    "tickMs": 120000
+  },
+  "injects": [
+    {
+      "atH": 6,
+      "kind": "CYBER_OUTAGE",
+      "text": "Cyber attack disrupts the Aurelian headquarters network.",
+      "faction": "BLUE"
+    },
+    {
+      "atH": 12,
+      "kind": "GNSS_OUTAGE",
+      "text": "GNSS jamming across the Halcyon Approaches.",
+      "faction": "BLUE",
+      "at": [
+        -42,
+        -25
+      ]
+    },
+    {
+      "atH": 30,
+      "kind": "SAT_FAILURE",
+      "text": "Khoros SATCOM satellite anomaly.",
+      "faction": "RED",
+      "target": "geo_satcom"
+    },
+    {
+      "atH": 96,
+      "kind": "CEASEFIRE_OFFER",
+      "text": "Back-channel talks open."
+    }
+  ]
+}

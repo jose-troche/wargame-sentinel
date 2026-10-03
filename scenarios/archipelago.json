@@ -1,0 +1,1382 @@
+{
+  "id": "archipelago",
+  "name": "Archipelago",
+  "version": "1.0.0",
+  "scale": "Regional, 21 days",
+  "description": "Two maritime powers contest the Tavi chain, a string of seven islands. Distributed forces must hop between islands while tankers and oilers set the limits of reach.",
+  "teachingFocus": "Distributed operations, tanker and supply limits",
+  "domains": [
+    "SEA",
+    "AIR",
+    "LAND"
+  ],
+  "durationH": 504,
+  "map": {
+    "kind": "fictional",
+    "bbox": [
+      -125,
+      -60,
+      -90,
+      -45
+    ],
+    "center": [
+      -53,
+      -108
+    ],
+    "zoom": 4.2,
+    "land": [
+      {
+        "name": "Ostra",
+        "ring": [
+          [
+            -117.353,
+            -50.2
+          ],
+          [
+            -117.51,
+            -50.086
+          ],
+          [
+            -117.518,
+            -49.929
+          ],
+          [
+            -117.688,
+            -49.776
+          ],
+          [
+            -118,
+            -49.785
+          ],
+          [
+            -118.255,
+            -49.854
+          ],
+          [
+            -118.441,
+            -49.952
+          ],
+          [
+            -118.546,
+            -50.073
+          ],
+          [
+            -118.729,
+            -50.2
+          ],
+          [
+            -118.782,
+            -50.382
+          ],
+          [
+            -118.491,
+            -50.476
+          ],
+          [
+            -118.215,
+            -50.491
+          ],
+          [
+            -118,
+            -50.559
+          ],
+          [
+            -117.728,
+            -50.569
+          ],
+          [
+            -117.468,
+            -50.499
+          ],
+          [
+            -117.275,
+            -50.369
+          ],
+          [
+            -117.353,
+            -50.2
+          ]
+        ]
+      },
+      {
+        "name": "Calla",
+        "ring": [
+          [
+            -114.072,
+            -51
+          ],
+          [
+            -113.986,
+            -50.857
+          ],
+          [
+            -114.033,
+            -50.681
+          ],
+          [
+            -114.314,
+            -50.612
+          ],
+          [
+            -114.6,
+            -50.613
+          ],
+          [
+            -114.841,
+            -50.673
+          ],
+          [
+            -115.007,
+            -50.771
+          ],
+          [
+            -115.259,
+            -50.846
+          ],
+          [
+            -115.448,
+            -51
+          ],
+          [
+            -115.257,
+            -51.153
+          ],
+          [
+            -115.006,
+            -51.229
+          ],
+          [
+            -114.841,
+            -51.327
+          ],
+          [
+            -114.6,
+            -51.387
+          ],
+          [
+            -114.314,
+            -51.388
+          ],
+          [
+            -114.034,
+            -51.319
+          ],
+          [
+            -113.988,
+            -51.143
+          ],
+          [
+            -114.072,
+            -51
+          ]
+        ]
+      },
+      {
+        "name": "Brenn",
+        "ring": [
+          [
+            -110.552,
+            -52
+          ],
+          [
+            -110.475,
+            -51.831
+          ],
+          [
+            -110.668,
+            -51.701
+          ],
+          [
+            -110.928,
+            -51.631
+          ],
+          [
+            -111.2,
+            -51.642
+          ],
+          [
+            -111.415,
+            -51.709
+          ],
+          [
+            -111.692,
+            -51.723
+          ],
+          [
+            -111.982,
+            -51.818
+          ],
+          [
+            -111.928,
+            -52
+          ],
+          [
+            -111.746,
+            -52.127
+          ],
+          [
+            -111.641,
+            -52.248
+          ],
+          [
+            -111.455,
+            -52.346
+          ],
+          [
+            -111.2,
+            -52.416
+          ],
+          [
+            -110.888,
+            -52.424
+          ],
+          [
+            -110.719,
+            -52.27
+          ],
+          [
+            -110.711,
+            -52.114
+          ],
+          [
+            -110.552,
+            -52
+          ]
+        ]
+      },
+      {
+        "name": "Tavi",
+        "ring": [
+          [
+            -107.234,
+            -53
+          ],
+          [
+            -107.303,
+            -52.838
+          ],
+          [
+            -107.483,
+            -52.709
+          ],
+          [
+            -107.752,
+            -52.663
+          ],
+          [
+            -108,
+            -52.691
+          ],
+          [
+            -108.259,
+            -52.648
+          ],
+          [
+            -108.595,
+            -52.666
+          ],
+          [
+            -108.685,
+            -52.84
+          ],
+          [
+            -108.61,
+            -53
+          ],
+          [
+            -108.574,
+            -53.134
+          ],
+          [
+            -108.456,
+            -53.257
+          ],
+          [
+            -108.278,
+            -53.378
+          ],
+          [
+            -108,
+            -53.465
+          ],
+          [
+            -107.733,
+            -53.363
+          ],
+          [
+            -107.622,
+            -53.213
+          ],
+          [
+            -107.414,
+            -53.136
+          ],
+          [
+            -107.234,
+            -53
+          ]
+        ]
+      },
+      {
+        "name": "Morrow",
+        "ring": [
+          [
+            -104.047,
+            -54
+          ],
+          [
+            -104.107,
+            -53.838
+          ],
+          [
+            -104.332,
+            -53.737
+          ],
+          [
+            -104.593,
+            -53.718
+          ],
+          [
+            -104.8,
+            -53.629
+          ],
+          [
+            -105.119,
+            -53.567
+          ],
+          [
+            -105.333,
+            -53.7
+          ],
+          [
+            -105.382,
+            -53.864
+          ],
+          [
+            -105.423,
+            -54
+          ],
+          [
+            -105.378,
+            -54.135
+          ],
+          [
+            -105.305,
+            -54.284
+          ],
+          [
+            -105.119,
+            -54.433
+          ],
+          [
+            -104.8,
+            -54.403
+          ],
+          [
+            -104.592,
+            -54.283
+          ],
+          [
+            -104.36,
+            -54.247
+          ],
+          [
+            -104.111,
+            -54.161
+          ],
+          [
+            -104.047,
+            -54
+          ]
+        ]
+      },
+      {
+        "name": "Seld",
+        "ring": [
+          [
+            -100.832,
+            -55
+          ],
+          [
+            -100.973,
+            -54.854
+          ],
+          [
+            -101.22,
+            -54.786
+          ],
+          [
+            -101.354,
+            -54.666
+          ],
+          [
+            -101.6,
+            -54.538
+          ],
+          [
+            -101.892,
+            -54.604
+          ],
+          [
+            -102.06,
+            -54.741
+          ],
+          [
+            -102.18,
+            -54.865
+          ],
+          [
+            -102.208,
+            -55
+          ],
+          [
+            -102.245,
+            -55.15
+          ],
+          [
+            -102.193,
+            -55.333
+          ],
+          [
+            -101.881,
+            -55.381
+          ],
+          [
+            -101.6,
+            -55.312
+          ],
+          [
+            -101.365,
+            -55.319
+          ],
+          [
+            -101.087,
+            -55.288
+          ],
+          [
+            -100.909,
+            -55.161
+          ],
+          [
+            -100.832,
+            -55
+          ]
+        ]
+      },
+      {
+        "name": "Ivo",
+        "ring": [
+          [
+            -97.704,
+            -55.8
+          ],
+          [
+            -97.904,
+            -55.684
+          ],
+          [
+            -97.958,
+            -55.551
+          ],
+          [
+            -98.092,
+            -55.381
+          ],
+          [
+            -98.4,
+            -55.368
+          ],
+          [
+            -98.657,
+            -55.451
+          ],
+          [
+            -98.85,
+            -55.547
+          ],
+          [
+            -98.947,
+            -55.673
+          ],
+          [
+            -99.08,
+            -55.8
+          ],
+          [
+            -99.175,
+            -55.981
+          ],
+          [
+            -98.931,
+            -56.099
+          ],
+          [
+            -98.618,
+            -56.096
+          ],
+          [
+            -98.4,
+            -56.142
+          ],
+          [
+            -98.131,
+            -56.166
+          ],
+          [
+            -97.877,
+            -56.094
+          ],
+          [
+            -97.676,
+            -55.969
+          ],
+          [
+            -97.704,
+            -55.8
+          ]
+        ]
+      },
+      {
+        "name": "Westmark",
+        "owner": "BLUE",
+        "ring": [
+          [
+            -121.139,
+            -50.5
+          ],
+          [
+            -120.862,
+            -50.052
+          ],
+          [
+            -120.736,
+            -49.461
+          ],
+          [
+            -121.175,
+            -48.996
+          ],
+          [
+            -121.92,
+            -48.81
+          ],
+          [
+            -122.652,
+            -48.769
+          ],
+          [
+            -123.332,
+            -48.849
+          ],
+          [
+            -123.883,
+            -49.118
+          ],
+          [
+            -124.311,
+            -49.419
+          ],
+          [
+            -124.913,
+            -49.622
+          ],
+          [
+            -125.668,
+            -49.94
+          ],
+          [
+            -125.955,
+            -50.5
+          ],
+          [
+            -125.483,
+            -51.021
+          ],
+          [
+            -124.788,
+            -51.321
+          ],
+          [
+            -124.329,
+            -51.596
+          ],
+          [
+            -123.92,
+            -51.94
+          ],
+          [
+            -123.337,
+            -52.174
+          ],
+          [
+            -122.647,
+            -52.254
+          ],
+          [
+            -121.883,
+            -52.248
+          ],
+          [
+            -121.157,
+            -52.019
+          ],
+          [
+            -120.861,
+            -51.482
+          ],
+          [
+            -121.047,
+            -50.91
+          ],
+          [
+            -121.139,
+            -50.5
+          ]
+        ]
+      },
+      {
+        "name": "Eastreach",
+        "owner": "RED",
+        "ring": [
+          [
+            -90.968,
+            -57
+          ],
+          [
+            -90.71,
+            -56.454
+          ],
+          [
+            -91.056,
+            -55.953
+          ],
+          [
+            -91.693,
+            -55.61
+          ],
+          [
+            -92.393,
+            -55.384
+          ],
+          [
+            -93.147,
+            -55.363
+          ],
+          [
+            -93.81,
+            -55.561
+          ],
+          [
+            -94.387,
+            -55.705
+          ],
+          [
+            -95.186,
+            -55.703
+          ],
+          [
+            -96.099,
+            -55.886
+          ],
+          [
+            -96.471,
+            -56.419
+          ],
+          [
+            -96.128,
+            -57
+          ],
+          [
+            -95.661,
+            -57.423
+          ],
+          [
+            -95.397,
+            -57.813
+          ],
+          [
+            -95.072,
+            -58.21
+          ],
+          [
+            -94.537,
+            -58.513
+          ],
+          [
+            -93.881,
+            -58.768
+          ],
+          [
+            -93.076,
+            -58.966
+          ],
+          [
+            -92.243,
+            -58.834
+          ],
+          [
+            -91.807,
+            -58.303
+          ],
+          [
+            -91.759,
+            -57.746
+          ],
+          [
+            -91.52,
+            -57.388
+          ],
+          [
+            -90.968,
+            -57
+          ]
+        ]
+      }
+    ],
+    "cities": [
+      {
+        "name": "Westmark Port",
+        "at": [
+          -50.4,
+          -121.6
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Eastreach Harbor",
+        "at": [
+          -56.8,
+          -95.6
+        ],
+        "faction": "RED"
+      }
+    ],
+    "chokepoints": [
+      {
+        "name": "Tavi Passage",
+        "at": [
+          -53.6,
+          -106.4
+        ],
+        "radiusKm": 80
+      }
+    ]
+  },
+  "factions": [
+    {
+      "id": "BLUE",
+      "name": "Westmark League",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "B1",
+          "name": "Control Brenn",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -52,
+            -111.2
+          ],
+          "radiusKm": 35,
+          "weight": 1
+        },
+        {
+          "id": "B2",
+          "name": "Control Tavi",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -53,
+            -108
+          ],
+          "radiusKm": 35,
+          "weight": 2
+        },
+        {
+          "id": "B3",
+          "name": "Sea control of the Tavi Passage",
+          "kind": "CONTROL",
+          "domain": "SEA",
+          "center": [
+            -53.6,
+            -106.4
+          ],
+          "radiusKm": 100,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "RED",
+      "name": "Eastreach Compact",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "R1",
+          "name": "Control Morrow",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -54,
+            -104.8
+          ],
+          "radiusKm": 35,
+          "weight": 1
+        },
+        {
+          "id": "R2",
+          "name": "Control Tavi",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -53,
+            -108
+          ],
+          "radiusKm": 35,
+          "weight": 2
+        },
+        {
+          "id": "R3",
+          "name": "Deny the Tavi Passage",
+          "kind": "DENY",
+          "domain": "SEA",
+          "center": [
+            -53.6,
+            -106.4
+          ],
+          "radiusKm": 100,
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "orbat": [
+    {
+      "faction": "BLUE",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -50.5,
+        -123.5
+      ],
+      "callsign": "WEST-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -51,
+        -124.5
+      ],
+      "callsign": "WEST-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -52,
+        -111.2
+      ],
+      "callsign": "MARINE",
+      "spreadKm": 4
+    },
+    {
+      "faction": "BLUE",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -51,
+        -114.6
+      ],
+      "callsign": "ISLE",
+      "spreadKm": 4
+    },
+    {
+      "faction": "BLUE",
+      "cls": "coastal_ashm",
+      "count": 2,
+      "at": [
+        -51,
+        -114.6
+      ],
+      "callsign": "REEF",
+      "spreadKm": 6
+    },
+    {
+      "faction": "BLUE",
+      "cls": "shorad_bn",
+      "count": 1,
+      "at": [
+        -52,
+        -111.2
+      ],
+      "callsign": "ATOLL",
+      "spreadKm": 4
+    },
+    {
+      "faction": "BLUE",
+      "cls": "lrad_bn",
+      "count": 1,
+      "at": [
+        -50.2,
+        -118
+      ],
+      "callsign": "LIGHTHOUSE",
+      "spreadKm": 4
+    },
+    {
+      "faction": "BLUE",
+      "cls": "arg",
+      "count": 1,
+      "at": [
+        -51.5,
+        -116.5
+      ],
+      "callsign": "SURF",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "csg",
+      "count": 1,
+      "at": [
+        -52.5,
+        -119
+      ],
+      "callsign": "RESOLUTE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_mr",
+      "count": 2,
+      "at": [
+        -52.5,
+        -119
+      ],
+      "callsign": "OSPREY",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "destroyer",
+      "count": 3,
+      "at": [
+        -52.6,
+        -113.5
+      ],
+      "callsign": "LANTERN",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "frigate",
+      "count": 3,
+      "at": [
+        -53,
+        -111
+      ],
+      "callsign": "HERON",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ssn",
+      "count": 2,
+      "at": [
+        -54,
+        -110
+      ],
+      "callsign": "LURKER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "oiler",
+      "count": 2,
+      "at": [
+        -51.6,
+        -118.4
+      ],
+      "callsign": "FOUNT",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mcm_group",
+      "count": 1,
+      "at": [
+        -53.2,
+        -109.8
+      ],
+      "callsign": "BROOM",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_as",
+      "count": 2,
+      "at": [
+        -50.5,
+        -122.8
+      ],
+      "callsign": "GULL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "tanker",
+      "count": 2,
+      "at": [
+        -50.5,
+        -122.8
+      ],
+      "callsign": "CISTERN",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "aewc",
+      "count": 1,
+      "at": [
+        -50.5,
+        -122.8
+      ],
+      "callsign": "PERISCOPE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mpa",
+      "count": 2,
+      "at": [
+        -50.5,
+        -122.8
+      ],
+      "callsign": "ALBATROSS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "hale_isr",
+      "count": 1,
+      "at": [
+        -50.5,
+        -122.8
+      ],
+      "callsign": "TOWER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "usv",
+      "count": 3,
+      "at": [
+        -52.8,
+        -110.5
+      ],
+      "callsign": "DART",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "uuv",
+      "count": 2,
+      "at": [
+        -53.4,
+        -108.4
+      ],
+      "callsign": "SQUID",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -57,
+        -92.5
+      ],
+      "callsign": "EAST-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -57.5,
+        -91.5
+      ],
+      "callsign": "EAST-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -54,
+        -104.8
+      ],
+      "callsign": "TIDEWATER",
+      "spreadKm": 4
+    },
+    {
+      "faction": "RED",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -55,
+        -101.6
+      ],
+      "callsign": "SALT",
+      "spreadKm": 4
+    },
+    {
+      "faction": "RED",
+      "cls": "coastal_ashm",
+      "count": 3,
+      "at": [
+        -55,
+        -101.6
+      ],
+      "callsign": "HARPOON",
+      "spreadKm": 6
+    },
+    {
+      "faction": "RED",
+      "cls": "shorad_bn",
+      "count": 1,
+      "at": [
+        -54,
+        -104.8
+      ],
+      "callsign": "SHELL",
+      "spreadKm": 4
+    },
+    {
+      "faction": "RED",
+      "cls": "lrad_bn",
+      "count": 1,
+      "at": [
+        -55.8,
+        -98.4
+      ],
+      "callsign": "CITADEL",
+      "spreadKm": 4
+    },
+    {
+      "faction": "RED",
+      "cls": "arg",
+      "count": 1,
+      "at": [
+        -55.2,
+        -99
+      ],
+      "callsign": "BREAKER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "destroyer",
+      "count": 4,
+      "at": [
+        -54.8,
+        -103
+      ],
+      "callsign": "GALE",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "frigate",
+      "count": 2,
+      "at": [
+        -54.2,
+        -102.5
+      ],
+      "callsign": "SQUALL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ssk",
+      "count": 3,
+      "at": [
+        -54,
+        -106
+      ],
+      "callsign": "LAMPREY",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "oiler",
+      "count": 2,
+      "at": [
+        -56,
+        -96.5
+      ],
+      "callsign": "BASIN",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_as",
+      "count": 3,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "SKUA",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_mr",
+      "count": 3,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "TERN",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "bomber",
+      "count": 2,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "CONDOR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "tanker",
+      "count": 1,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "FLASK",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "mpa",
+      "count": 1,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "PETREL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "male_drone",
+      "count": 3,
+      "at": [
+        -56.9,
+        -94
+      ],
+      "callsign": "KITE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "usv",
+      "count": 4,
+      "at": [
+        -54.5,
+        -102
+      ],
+      "callsign": "STING",
+      "spreadKm": 15
+    }
+  ],
+  "space": [
+    {
+      "faction": "BLUE",
+      "cls": "leo_imaging",
+      "planes": 1,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 200,
+      "callsign": "WEYE"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_sar",
+      "planes": 1,
+      "perPlane": 3,
+      "altKm": 600,
+      "incDeg": 97.4,
+      "raanDeg": 230,
+      "callsign": "ESAR"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -115,
+      "callsign": "WCOM"
+    },
+    {
+      "faction": "RED",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -95,
+      "callsign": "ECOM"
+    }
+  ],
+  "environment": {
+    "seaState": "rough",
+    "fronts": 3,
+    "startHourUtc": 8
+  },
+  "rules": {
+    "startEscalation": 2,
+    "tickMs": 60000
+  },
+  "injects": [
+    {
+      "atH": 30,
+      "kind": "CONVOY",
+      "text": "Neutral fishing fleet moves through the passage.",
+      "at": [
+        -58.8,
+        -106.4
+      ]
+    },
+    {
+      "atH": 100,
+      "kind": "STORM",
+      "text": "Southern Ocean gale.",
+      "at": [
+        -54,
+        -105
+      ]
+    },
+    {
+      "atH": 300,
+      "kind": "CEASEFIRE_OFFER",
+      "text": "Mediators propose talks."
+    }
+  ]
+}

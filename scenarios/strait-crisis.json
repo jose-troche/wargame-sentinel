@@ -1,0 +1,1312 @@
+{
+  "id": "strait-crisis",
+  "name": "Strait Crisis",
+  "version": "1.0.0",
+  "scale": "Regional, 10 days",
+  "description": "The Corvane Union moves to seize Meridian Island in the strait that separates it from the Republic of Aster. Aster must keep the strait open under an anti-access umbrella.",
+  "teachingFocus": "A2/AD, sea control, ISR revisit gaps",
+  "domains": [
+    "SEA",
+    "AIR",
+    "SPACE",
+    "DRONE"
+  ],
+  "durationH": 240,
+  "map": {
+    "kind": "fictional",
+    "bbox": [
+      -145,
+      -50,
+      -114,
+      -32
+    ],
+    "center": [
+      -41,
+      -130
+    ],
+    "zoom": 4.2,
+    "land": [
+      {
+        "name": "Aster",
+        "owner": "BLUE",
+        "ring": [
+          [
+            -131.545,
+            -41
+          ],
+          [
+            -131.826,
+            -39.68
+          ],
+          [
+            -132.446,
+            -38.495
+          ],
+          [
+            -133.565,
+            -37.744
+          ],
+          [
+            -134.914,
+            -37.661
+          ],
+          [
+            -135.993,
+            -37.611
+          ],
+          [
+            -137.103,
+            -36.965
+          ],
+          [
+            -138.665,
+            -36.442
+          ],
+          [
+            -140.039,
+            -37.073
+          ],
+          [
+            -140.491,
+            -38.534
+          ],
+          [
+            -140.439,
+            -39.888
+          ],
+          [
+            -140.489,
+            -41
+          ],
+          [
+            -140.408,
+            -42.103
+          ],
+          [
+            -139.97,
+            -43.144
+          ],
+          [
+            -139.422,
+            -44.243
+          ],
+          [
+            -138.63,
+            -45.484
+          ],
+          [
+            -137.266,
+            -46.124
+          ],
+          [
+            -135.83,
+            -45.478
+          ],
+          [
+            -134.949,
+            -44.265
+          ],
+          [
+            -134.182,
+            -43.572
+          ],
+          [
+            -132.967,
+            -43.183
+          ],
+          [
+            -131.858,
+            -42.311
+          ],
+          [
+            -131.545,
+            -41
+          ]
+        ]
+      },
+      {
+        "name": "Corvane",
+        "owner": "RED",
+        "ring": [
+          [
+            -118.57,
+            -41
+          ],
+          [
+            -118.816,
+            -39.545
+          ],
+          [
+            -119.849,
+            -38.518
+          ],
+          [
+            -121.129,
+            -38.105
+          ],
+          [
+            -121.995,
+            -37.514
+          ],
+          [
+            -122.857,
+            -36.271
+          ],
+          [
+            -124.259,
+            -35.415
+          ],
+          [
+            -125.675,
+            -35.962
+          ],
+          [
+            -126.49,
+            -37.35
+          ],
+          [
+            -126.98,
+            -38.634
+          ],
+          [
+            -127.407,
+            -39.787
+          ],
+          [
+            -127.514,
+            -41
+          ],
+          [
+            -127.398,
+            -42.211
+          ],
+          [
+            -127.373,
+            -43.633
+          ],
+          [
+            -126.986,
+            -45.255
+          ],
+          [
+            -125.71,
+            -46.119
+          ],
+          [
+            -124.13,
+            -45.634
+          ],
+          [
+            -122.986,
+            -44.779
+          ],
+          [
+            -121.96,
+            -44.567
+          ],
+          [
+            -120.633,
+            -44.5
+          ],
+          [
+            -119.456,
+            -43.749
+          ],
+          [
+            -118.826,
+            -42.452
+          ],
+          [
+            -118.57,
+            -41
+          ]
+        ]
+      },
+      {
+        "name": "Meridian Island",
+        "ring": [
+          [
+            -129.644,
+            -41
+          ],
+          [
+            -129.758,
+            -40.914
+          ],
+          [
+            -129.822,
+            -40.835
+          ],
+          [
+            -129.914,
+            -40.723
+          ],
+          [
+            -130.079,
+            -40.744
+          ],
+          [
+            -130.193,
+            -40.822
+          ],
+          [
+            -130.263,
+            -40.907
+          ],
+          [
+            -130.297,
+            -41
+          ],
+          [
+            -130.347,
+            -41.123
+          ],
+          [
+            -130.229,
+            -41.212
+          ],
+          [
+            -130.06,
+            -41.192
+          ],
+          [
+            -129.934,
+            -41.214
+          ],
+          [
+            -129.785,
+            -41.198
+          ],
+          [
+            -129.675,
+            -41.115
+          ],
+          [
+            -129.644,
+            -41
+          ]
+        ]
+      }
+    ],
+    "cities": [
+      {
+        "name": "Port Haldane",
+        "at": [
+          -40.6,
+          -132.6
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Aster City",
+        "at": [
+          -41.6,
+          -137
+        ],
+        "faction": "BLUE"
+      },
+      {
+        "name": "Velmora",
+        "at": [
+          -40.8,
+          -127.4
+        ],
+        "faction": "RED"
+      },
+      {
+        "name": "Corvane Capital",
+        "at": [
+          -41.5,
+          -122.5
+        ],
+        "faction": "RED"
+      }
+    ],
+    "chokepoints": [
+      {
+        "name": "Meridian Strait",
+        "at": [
+          -41,
+          -130
+        ],
+        "radiusKm": 120
+      }
+    ]
+  },
+  "factions": [
+    {
+      "id": "BLUE",
+      "name": "Republic of Aster",
+      "will": 72,
+      "objectives": [
+        {
+          "id": "B1",
+          "name": "Keep the Meridian Strait open",
+          "kind": "CONTROL",
+          "domain": "SEA",
+          "center": [
+            -42.2,
+            -130
+          ],
+          "radiusKm": 120,
+          "weight": 2
+        },
+        {
+          "id": "B2",
+          "name": "Deny Meridian Island",
+          "kind": "DENY",
+          "domain": "LAND",
+          "center": [
+            -41,
+            -130
+          ],
+          "radiusKm": 35,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "RED",
+      "name": "Corvane Union",
+      "will": 70,
+      "objectives": [
+        {
+          "id": "R1",
+          "name": "Seize Meridian Island",
+          "kind": "CONTROL",
+          "domain": "LAND",
+          "center": [
+            -41,
+            -130
+          ],
+          "radiusKm": 35,
+          "weight": 2
+        },
+        {
+          "id": "R2",
+          "name": "Deny the strait to Aster",
+          "kind": "DENY",
+          "domain": "SEA",
+          "center": [
+            -42.2,
+            -130
+          ],
+          "radiusKm": 120,
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "orbat": [
+    {
+      "faction": "BLUE",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -41.3,
+        -135.6
+      ],
+      "callsign": "ASTER-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -42.5,
+        -138
+      ],
+      "callsign": "ASTER-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "launch_site",
+      "count": 1,
+      "at": [
+        -44,
+        -137
+      ],
+      "callsign": "ASTER-LS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "cyber_unit",
+      "count": 1,
+      "at": [
+        -41.4,
+        -135.8
+      ],
+      "callsign": "GHOST",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "armored_bde",
+      "count": 1,
+      "at": [
+        -40.8,
+        -133.6
+      ],
+      "callsign": "IRON",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mech_inf_bde",
+      "count": 2,
+      "at": [
+        -41.4,
+        -133.2
+      ],
+      "callsign": "LANCER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "light_inf_bde",
+      "count": 1,
+      "at": [
+        -40.6,
+        -132.8
+      ],
+      "callsign": "RANGER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "artillery_bn",
+      "count": 2,
+      "at": [
+        -41,
+        -133
+      ],
+      "callsign": "THUNDER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "shorad_bn",
+      "count": 2,
+      "at": [
+        -40.9,
+        -132.8
+      ],
+      "callsign": "SHIELD",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "lrad_bn",
+      "count": 2,
+      "at": [
+        -41.3,
+        -133.4
+      ],
+      "callsign": "AEGIS",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "coastal_ashm",
+      "count": 2,
+      "at": [
+        -40.6,
+        -132.5
+      ],
+      "callsign": "TRIDENT",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "engineer_bn",
+      "count": 1,
+      "at": [
+        -41.2,
+        -134
+      ],
+      "callsign": "BRIDGE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "log_convoy",
+      "count": 3,
+      "at": [
+        -41.3,
+        -134.6
+      ],
+      "callsign": "MULE",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ew_bn",
+      "count": 1,
+      "at": [
+        -40.9,
+        -132.9
+      ],
+      "callsign": "STATIC",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "decoy_group",
+      "count": 2,
+      "at": [
+        -40.7,
+        -133
+      ],
+      "callsign": "MIRAGE",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "csg",
+      "count": 1,
+      "at": [
+        -44.6,
+        -130.6
+      ],
+      "callsign": "VALIANT",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_mr",
+      "count": 2,
+      "at": [
+        -44.6,
+        -130.6
+      ],
+      "callsign": "TALON",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "destroyer",
+      "count": 3,
+      "at": [
+        -43.4,
+        -130.8
+      ],
+      "callsign": "SENTRY",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "frigate",
+      "count": 3,
+      "at": [
+        -42.6,
+        -130.6
+      ],
+      "callsign": "WATCH",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "ssn",
+      "count": 2,
+      "at": [
+        -42.6,
+        -129.9
+      ],
+      "callsign": "SHADOW",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "oiler",
+      "count": 1,
+      "at": [
+        -45,
+        -131
+      ],
+      "callsign": "WELL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mcm_group",
+      "count": 1,
+      "at": [
+        -39.6,
+        -130.4
+      ],
+      "callsign": "SWEEP",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_as",
+      "count": 4,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "VIPER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "fighter_mr",
+      "count": 4,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "HAWK",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "bomber",
+      "count": 1,
+      "at": [
+        -42,
+        -138
+      ],
+      "callsign": "ANVIL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "aewc",
+      "count": 1,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "SKYEYE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "tanker",
+      "count": 1,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "TEXACO",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "mpa",
+      "count": 1,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "ORCA",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "helo",
+      "count": 2,
+      "at": [
+        -40.9,
+        -133.9
+      ],
+      "callsign": "KESTREL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "hale_isr",
+      "count": 1,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "HIGHWATCH",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "male_drone",
+      "count": 3,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "SPECTRE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "cca",
+      "count": 2,
+      "at": [
+        -41,
+        -134.9
+      ],
+      "callsign": "WINGMAN",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "loitering_munition",
+      "count": 2,
+      "at": [
+        -40.8,
+        -133.3
+      ],
+      "callsign": "HORNET",
+      "spreadKm": 0
+    },
+    {
+      "faction": "BLUE",
+      "cls": "usv",
+      "count": 2,
+      "at": [
+        -41.9,
+        -130.9
+      ],
+      "callsign": "SKIFF",
+      "spreadKm": 15
+    },
+    {
+      "faction": "BLUE",
+      "cls": "uuv",
+      "count": 2,
+      "at": [
+        -41.6,
+        -130.7
+      ],
+      "callsign": "EEL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "hq",
+      "count": 1,
+      "at": [
+        -41.4,
+        -123
+      ],
+      "callsign": "CORV-HQ",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "ground_station",
+      "count": 1,
+      "at": [
+        -43,
+        -121
+      ],
+      "callsign": "CORV-GS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "launch_site",
+      "count": 1,
+      "at": [
+        -38.5,
+        -121.5
+      ],
+      "callsign": "CORV-LS",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "cyber_unit",
+      "count": 1,
+      "at": [
+        -41.5,
+        -122.8
+      ],
+      "callsign": "SPIDER",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "armored_bde",
+      "count": 1,
+      "at": [
+        -40.8,
+        -126.4
+      ],
+      "callsign": "BEAR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "mech_inf_bde",
+      "count": 2,
+      "at": [
+        -41.3,
+        -126.8
+      ],
+      "callsign": "WOLF",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "light_inf_bde",
+      "count": 2,
+      "at": [
+        -40.5,
+        -127.3
+      ],
+      "callsign": "FALCON",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "artillery_bn",
+      "count": 3,
+      "at": [
+        -41,
+        -127
+      ],
+      "callsign": "HAMMER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "shorad_bn",
+      "count": 2,
+      "at": [
+        -40.9,
+        -127.2
+      ],
+      "callsign": "WALL",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "lrad_bn",
+      "count": 3,
+      "at": [
+        -41.2,
+        -126.6
+      ],
+      "callsign": "DOME",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "coastal_ashm",
+      "count": 4,
+      "at": [
+        -40.6,
+        -127.6
+      ],
+      "callsign": "SPEAR",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "log_convoy",
+      "count": 3,
+      "at": [
+        -41.3,
+        -125.5
+      ],
+      "callsign": "OX",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ew_bn",
+      "count": 2,
+      "at": [
+        -40.9,
+        -127
+      ],
+      "callsign": "STORMCLOUD",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "decoy_group",
+      "count": 2,
+      "at": [
+        -40.6,
+        -127
+      ],
+      "callsign": "PHANTOM",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "arg",
+      "count": 1,
+      "at": [
+        -39.2,
+        -128.4
+      ],
+      "callsign": "TIDE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "destroyer",
+      "count": 3,
+      "at": [
+        -40,
+        -128.6
+      ],
+      "callsign": "BLADE",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "frigate",
+      "count": 2,
+      "at": [
+        -39.6,
+        -129
+      ],
+      "callsign": "PIKE",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ssk",
+      "count": 3,
+      "at": [
+        -42,
+        -128.8
+      ],
+      "callsign": "MORAY",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "ssn",
+      "count": 1,
+      "at": [
+        -43.5,
+        -128.5
+      ],
+      "callsign": "KRAKEN",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "oiler",
+      "count": 1,
+      "at": [
+        -38.6,
+        -128
+      ],
+      "callsign": "SPRING",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_as",
+      "count": 4,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "FLANK",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "fighter_mr",
+      "count": 4,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "STRIKE",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "bomber",
+      "count": 2,
+      "at": [
+        -40,
+        -121
+      ],
+      "callsign": "BADGER",
+      "spreadKm": 15
+    },
+    {
+      "faction": "RED",
+      "cls": "aewc",
+      "count": 1,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "MAINSTAY",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "tanker",
+      "count": 1,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "CAMEL",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "mpa",
+      "count": 1,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "MAY",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "helo",
+      "count": 2,
+      "at": [
+        -40.9,
+        -126
+      ],
+      "callsign": "HIND",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "hale_isr",
+      "count": 1,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "ALTAIR",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "male_drone",
+      "count": 3,
+      "at": [
+        -41.1,
+        -124.8
+      ],
+      "callsign": "ORION",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "loitering_munition",
+      "count": 3,
+      "at": [
+        -40.8,
+        -126.5
+      ],
+      "callsign": "LANCET",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "quad_swarm",
+      "count": 2,
+      "at": [
+        -40.8,
+        -126.8
+      ],
+      "callsign": "GNAT",
+      "spreadKm": 0
+    },
+    {
+      "faction": "RED",
+      "cls": "usv",
+      "count": 3,
+      "at": [
+        -40.3,
+        -128.9
+      ],
+      "callsign": "WASP",
+      "spreadKm": 15
+    }
+  ],
+  "space": [
+    {
+      "faction": "BLUE",
+      "cls": "leo_imaging",
+      "planes": 2,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 10,
+      "callsign": "AEYE"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "leo_sar",
+      "planes": 1,
+      "perPlane": 2,
+      "altKm": 600,
+      "incDeg": 97.4,
+      "raanDeg": 100,
+      "callsign": "ASAR"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "leo_comms",
+      "planes": 3,
+      "perPlane": 4,
+      "altKm": 560,
+      "incDeg": 53,
+      "raanDeg": 0,
+      "callsign": "ANET"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "meo_pnt",
+      "planes": 3,
+      "perPlane": 2,
+      "altKm": 20200,
+      "incDeg": 55,
+      "raanDeg": 0,
+      "callsign": "ANAV"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -135,
+      "callsign": "ACOM"
+    },
+    {
+      "faction": "BLUE",
+      "cls": "missile_warning",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -143,
+      "callsign": "AWARN"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_imaging",
+      "planes": 2,
+      "perPlane": 3,
+      "altKm": 550,
+      "incDeg": 97.6,
+      "raanDeg": 40,
+      "callsign": "CEYE"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_sar",
+      "planes": 1,
+      "perPlane": 2,
+      "altKm": 600,
+      "incDeg": 97.4,
+      "raanDeg": 130,
+      "callsign": "CSAR"
+    },
+    {
+      "faction": "RED",
+      "cls": "leo_comms",
+      "planes": 3,
+      "perPlane": 4,
+      "altKm": 560,
+      "incDeg": 53,
+      "raanDeg": 20,
+      "callsign": "CNET"
+    },
+    {
+      "faction": "RED",
+      "cls": "meo_pnt",
+      "planes": 3,
+      "perPlane": 2,
+      "altKm": 20200,
+      "incDeg": 55,
+      "raanDeg": 60,
+      "callsign": "CNAV"
+    },
+    {
+      "faction": "RED",
+      "cls": "geo_satcom",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -120,
+      "callsign": "CCOM"
+    },
+    {
+      "faction": "RED",
+      "cls": "missile_warning",
+      "planes": 1,
+      "perPlane": 1,
+      "altKm": 35786,
+      "incDeg": 0,
+      "raanDeg": -128,
+      "callsign": "CWARN"
+    }
+  ],
+  "environment": {
+    "seaState": "moderate",
+    "fronts": 2,
+    "startHourUtc": 6
+  },
+  "rules": {
+    "startEscalation": 2,
+    "tickMs": 60000
+  },
+  "injects": [
+    {
+      "atH": 18,
+      "kind": "CONVOY",
+      "text": "A neutral merchant convoy enters the strait from the south.",
+      "at": [
+        -46.6,
+        -130.2
+      ]
+    },
+    {
+      "atH": 48,
+      "kind": "SAT_FAILURE",
+      "text": "An Aster imaging satellite suffers an on-orbit failure.",
+      "faction": "BLUE",
+      "target": "leo_imaging"
+    },
+    {
+      "atH": 72,
+      "kind": "STORM",
+      "text": "A deep storm front crosses the strait.",
+      "at": [
+        -42,
+        -128
+      ]
+    },
+    {
+      "atH": 120,
+      "kind": "CEASEFIRE_OFFER",
+      "text": "A neutral mediator proposes a 48-hour ceasefire."
+    },
+    {
+      "atH": 150,
+      "kind": "GNSS_OUTAGE",
+      "text": "Widespread GNSS interference over the strait.",
+      "faction": "BLUE",
+      "at": [
+        -41,
+        -130
+      ]
+    }
+  ]
+}

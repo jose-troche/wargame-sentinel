@@ -1,0 +1,9 @@
+[
+  { "name": "clean json mode", "raw": { "response": { "orders": [{ "type": "FRAGO", "to": "B-HAWK-1", "task": "CAP", "area_h3": "85b1a2c7fffffff", "window_sim_h": [6, 12], "roe": "WEAPONS_TIGHT" }], "rationale": "Cover the tanker track.", "confidence": 0.7 } }, "valid": true },
+  { "name": "json in prose", "raw": { "response": "Here is my plan:\n{\"orders\":[{\"type\":\"ATO\",\"to\":\"B-VIPER-2\",\"task\":\"CAP\"}],\"rationale\":\"Defend the strait\"}\nThanks." }, "valid": true },
+  { "name": "openai-style choices", "raw": { "choices": [{ "message": { "content": "{\"orders\":[],\"rationale\":\"Hold\",\"confidence\":0.4}" } }] }, "valid": true },
+  { "name": "invalid task", "raw": { "response": { "orders": [{ "type": "FRAGO", "to": "B-HAWK-1", "task": "NUKE" }], "rationale": "x" } }, "valid": false },
+  { "name": "missing rationale", "raw": { "response": { "orders": [] } }, "valid": false },
+  { "name": "truncated", "raw": { "response": "{\"orders\":[{\"type\":\"FRAGO\",\"to\":\"B-" }, "valid": false },
+  { "name": "empty", "raw": null, "valid": false }
+]
