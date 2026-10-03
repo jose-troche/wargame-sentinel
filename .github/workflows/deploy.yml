@@ -1,0 +1,29 @@
+name: deploy
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r typecheck && pnpm -r test
+      - run: pnpm --filter @sentinel/console build
+      - name: End-to-end tests (headless Chromium)
+        run: |
+          pnpm --filter @sentinel/console exec playwright install --with-deps chromium
+          pnpm --filter @sentinel/console e2e
+      - name: Preview version (PRs)
+        if: github.event_name == 'pull_request' && env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm --filter @sentinel/edge exec wrangler versions upload
+        env: { CLOUDFLARE_API_TOKEN: "${{ secrets.CLOUDFLARE_API_TOKEN }}" }
+      - name: Deploy (main)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          pnpm --filter @sentinel/edge exec wrangler d1 migrations apply sentinel --remote
+          pnpm --filter @sentinel/edge exec wrangler deploy
+        env: { CLOUDFLARE_API_TOKEN: "${{ secrets.CLOUDFLARE_API_TOKEN }}" }
