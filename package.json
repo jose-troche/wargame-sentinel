@@ -1,0 +1,19 @@
+{
+  "name": "warfare-sentinel",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.8.1",
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "build": "pnpm --filter @sentinel/console build",
+    "dev": "pnpm --filter @sentinel/console dev",
+    "deploy": "pnpm build && pnpm --filter @sentinel/edge run deploy",
+    "bench:slices": "pnpm --filter @sentinel/tools bench"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}
