@@ -13,7 +13,8 @@ export type ToWorker =
   | { type: "view"; view: View }
   | { type: "seek"; tick: number }
   | { type: "seats"; human: string[] }
-  | { type: "aar" };
+  | { type: "aar" }
+  | { type: "end" };
 
 export type FromWorker =
   | {
@@ -30,5 +31,5 @@ export type FromWorker =
   | { type: "status"; playing: boolean; speed: number; tick: number; simMs: number; ended: boolean; actualSpeed: number; maxTick: number }
   | { type: "decision"; decision: Decision }
   | { type: "rewound"; tick: number; events: EventView[] }
-  | { type: "aar"; report: unknown; notable: EventView[] }
+  | { type: "aar"; report: unknown; notable: EventView[]; final: boolean }
   | { type: "error"; message: string };

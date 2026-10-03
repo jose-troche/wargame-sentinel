@@ -148,7 +148,7 @@ function loop() {
 function finish() {
   emitFrame(true);
   const report = computeAar(allEvents);
-  post({ type: "aar", report, notable: allEvents.filter((e) => e.notable).slice(-120) });
+  post({ type: "aar", report, notable: allEvents.filter((e) => e.notable).slice(-120), final: true });
 }
 
 /** Rewind (or fast-forward) deterministically: restore the nearest snapshot and replay the order log. */
@@ -224,7 +224,8 @@ ctx.onmessage = (ev: MessageEvent<ToWorker>) => {
       case "view": if (engine) post({ type: "full", view: m.view, delta: engine.viewSnapshot(m.view) }); break;
       case "seek": seek(m.tick); break;
       case "seats": humanSeats = new Set(m.human); commander.humanSeats = humanSeats; break;
-      case "aar": post({ type: "aar", report: computeAar(allEvents), notable: allEvents.filter((e) => e.notable).slice(-120) }); break;
+      case "aar": post({ type: "aar", report: computeAar(allEvents), notable: allEvents.filter((e) => e.notable).slice(-120), final: false }); break;
+      case "end": playing = false; finish(); break;
     }
   } catch (err) {
     post({ type: "error", message: String((err as Error).message ?? err) });

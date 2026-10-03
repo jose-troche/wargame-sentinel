@@ -173,7 +173,9 @@ export class SessionController {
         break;
       case "aar":
         st.set({ aar: { report: m.report, narrative: null } });
-        if (st.mode === "host") this.hub?.send({ t: "AAR", report: m.report, notable: m.notable });
+        // Only a finished run closes the online session; on-demand AAR previews stay local.
+        if (st.mode === "host" && m.final) this.hub?.send({ t: "AAR", report: m.report, notable: m.notable });
+        if (m.final) st.set({ ended: true });
         break;
       case "error":
         st.notify(m.message, true);
@@ -235,7 +237,7 @@ export class SessionController {
       case "next_event": this.toWorker({ type: "next_event" }); break;
       case "inject": if (f.inject) this.toWorker({ type: "inject", inject: f.inject as never }); break;
       case "snapshot_request": if (f.view) this.toWorker({ type: "view", view: f.view }); break;
-      case "end": this.toWorker({ type: "aar" }); break;
+      case "end": this.toWorker({ type: "end" }); break;
     }
   }
 
