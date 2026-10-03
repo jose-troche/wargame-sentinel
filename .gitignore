@@ -6,3 +6,5 @@ dist/
 .DS_Store
 coverage/
 apps/edge/worker-configuration.d.ts.bak
+test-results/
+playwright-report/
