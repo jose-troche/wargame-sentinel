@@ -1,9 +1,9 @@
 {
   "id": "sandbox",
   "name": "Sandbox",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scale": "Any",
-  "description": "A small two-island free-play map for designers: a handful of units per domain to try orders, sensors and C2 effects.",
+  "description": "A small free-play map across Cook Strait: two fictional island states with a handful of units per domain to try orders, sensors and C2 effects.",
   "teachingFocus": "Free play for designers",
   "domains": [
     "LAND",
@@ -14,240 +14,52 @@
   ],
   "durationH": 72,
   "map": {
-    "kind": "fictional",
+    "kind": "real",
     "bbox": [
-      -158,
-      -42,
-      -142,
-      -30
+      172.4,
+      -42.4,
+      176.4,
+      -40.2
     ],
     "center": [
-      -36,
-      -150
+      -41.35,
+      174.4
     ],
-    "zoom": 5.5,
-    "land": [
-      {
-        "name": "West Isle",
-        "owner": "BLUE",
-        "ring": [
-          [
-            -152.25,
-            -36
-          ],
-          [
-            -152.128,
-            -35.56
-          ],
-          [
-            -152.388,
-            -35.171
-          ],
-          [
-            -152.802,
-            -34.894
-          ],
-          [
-            -153.265,
-            -34.713
-          ],
-          [
-            -153.77,
-            -34.718
-          ],
-          [
-            -154.202,
-            -34.874
-          ],
-          [
-            -154.604,
-            -34.942
-          ],
-          [
-            -155.174,
-            -34.917
-          ],
-          [
-            -155.761,
-            -35.095
-          ],
-          [
-            -155.936,
-            -35.545
-          ],
-          [
-            -155.69,
-            -36
-          ],
-          [
-            -155.429,
-            -36.336
-          ],
-          [
-            -155.282,
-            -36.659
-          ],
-          [
-            -155.055,
-            -36.974
-          ],
-          [
-            -154.694,
-            -37.216
-          ],
-          [
-            -154.259,
-            -37.442
-          ],
-          [
-            -153.713,
-            -37.598
-          ],
-          [
-            -153.175,
-            -37.446
-          ],
-          [
-            -152.921,
-            -36.996
-          ],
-          [
-            -152.867,
-            -36.582
-          ],
-          [
-            -152.635,
-            -36.321
-          ],
-          [
-            -152.25,
-            -36
-          ]
-        ]
-      },
-      {
-        "name": "East Isle",
-        "owner": "RED",
-        "ring": [
-          [
-            -144.08,
-            -36
-          ],
-          [
-            -144.193,
-            -35.575
-          ],
-          [
-            -144.441,
-            -35.198
-          ],
-          [
-            -144.836,
-            -34.925
-          ],
-          [
-            -145.354,
-            -34.868
-          ],
-          [
-            -145.805,
-            -34.915
-          ],
-          [
-            -146.215,
-            -34.804
-          ],
-          [
-            -146.788,
-            -34.62
-          ],
-          [
-            -147.378,
-            -34.728
-          ],
-          [
-            -147.624,
-            -35.165
-          ],
-          [
-            -147.568,
-            -35.632
-          ],
-          [
-            -147.52,
-            -36
-          ],
-          [
-            -147.493,
-            -36.351
-          ],
-          [
-            -147.335,
-            -36.686
-          ],
-          [
-            -147.088,
-            -37.005
-          ],
-          [
-            -146.783,
-            -37.371
-          ],
-          [
-            -146.294,
-            -37.639
-          ],
-          [
-            -145.725,
-            -37.528
-          ],
-          [
-            -145.359,
-            -37.124
-          ],
-          [
-            -145.125,
-            -36.808
-          ],
-          [
-            -144.73,
-            -36.653
-          ],
-          [
-            -144.267,
-            -36.407
-          ],
-          [
-            -144.08,
-            -36
-          ]
-        ]
-      }
-    ],
+    "zoom": 7.4,
+    "land": [],
     "cities": [
       {
-        "name": "Westport",
+        "name": "Southport",
         "at": [
-          -36,
-          -153.2
+          -41.52,
+          173.95
         ],
         "faction": "BLUE"
       },
       {
-        "name": "Eastport",
+        "name": "Northport",
         "at": [
-          -36,
-          -146.8
+          -41.29,
+          174.78
         ],
         "faction": "RED"
       }
     ],
-    "chokepoints": []
+    "chokepoints": [
+      {
+        "name": "The Narrows",
+        "at": [
+          -41.4,
+          174.5
+        ],
+        "radiusKm": 25
+      }
+    ]
   },
   "factions": [
     {
       "id": "BLUE",
-      "name": "West Isle",
+      "name": "South Isle",
       "will": 70,
       "objectives": [
         {
@@ -256,17 +68,17 @@
           "kind": "CONTROL",
           "domain": "SEA",
           "center": [
-            -36,
-            -150
+            -41.45,
+            174.55
           ],
-          "radiusKm": 80,
+          "radiusKm": 35,
           "weight": 1
         }
       ]
     },
     {
       "id": "RED",
-      "name": "East Isle",
+      "name": "North Isle",
       "will": 70,
       "objectives": [
         {
@@ -275,10 +87,10 @@
           "kind": "CONTROL",
           "domain": "SEA",
           "center": [
-            -36,
-            -150
+            -41.45,
+            174.55
           ],
-          "radiusKm": 80,
+          "radiusKm": 35,
           "weight": 1
         }
       ]
@@ -290,10 +102,10 @@
       "cls": "hq",
       "count": 1,
       "at": [
-        -36,
-        -154.5
+        -41.7,
+        173.4
       ],
-      "callsign": "W-HQ",
+      "callsign": "S-HQ",
       "spreadKm": 0
     },
     {
@@ -301,10 +113,10 @@
       "cls": "ground_station",
       "count": 1,
       "at": [
-        -36.4,
-        -154.8
+        -41.8,
+        173.2
       ],
-      "callsign": "W-GS",
+      "callsign": "S-GS",
       "spreadKm": 0
     },
     {
@@ -312,10 +124,10 @@
       "cls": "mech_inf_bde",
       "count": 1,
       "at": [
-        -35.8,
-        -153.4
+        -41.6,
+        173.8
       ],
-      "callsign": "W-INF",
+      "callsign": "S-INF",
       "spreadKm": 0
     },
     {
@@ -323,10 +135,10 @@
       "cls": "lrad_bn",
       "count": 1,
       "at": [
-        -36.2,
-        -153.6
+        -41.65,
+        173.6
       ],
-      "callsign": "W-SAM",
+      "callsign": "S-SAM",
       "spreadKm": 0
     },
     {
@@ -334,21 +146,21 @@
       "cls": "destroyer",
       "count": 2,
       "at": [
-        -36.2,
-        -151.5
+        -41.6,
+        174.5
       ],
-      "callsign": "W-DDG",
-      "spreadKm": 15
+      "callsign": "S-DDG",
+      "spreadKm": 12
     },
     {
       "faction": "BLUE",
       "cls": "ssn",
       "count": 1,
       "at": [
-        -35.4,
-        -150.5
+        -41.9,
+        174.7
       ],
-      "callsign": "W-SUB",
+      "callsign": "S-SUB",
       "spreadKm": 0
     },
     {
@@ -356,10 +168,10 @@
       "cls": "fighter_mr",
       "count": 2,
       "at": [
-        -36,
-        -154
+        -41.52,
+        173.87
       ],
-      "callsign": "W-FTR",
+      "callsign": "S-FTR",
       "spreadKm": 0
     },
     {
@@ -367,10 +179,10 @@
       "cls": "male_drone",
       "count": 2,
       "at": [
-        -36,
-        -154
+        -41.52,
+        173.87
       ],
-      "callsign": "W-UAV",
+      "callsign": "S-UAV",
       "spreadKm": 0
     },
     {
@@ -378,10 +190,10 @@
       "cls": "ew_bn",
       "count": 1,
       "at": [
-        -36.1,
-        -153.3
+        -41.55,
+        173.95
       ],
-      "callsign": "W-EW",
+      "callsign": "S-EW",
       "spreadKm": 0
     },
     {
@@ -389,10 +201,10 @@
       "cls": "hq",
       "count": 1,
       "at": [
-        -36,
-        -145.5
+        -40.95,
+        175.6
       ],
-      "callsign": "E-HQ",
+      "callsign": "N-HQ",
       "spreadKm": 0
     },
     {
@@ -400,10 +212,10 @@
       "cls": "ground_station",
       "count": 1,
       "at": [
-        -36.4,
-        -145.2
+        -41.1,
+        175.4
       ],
-      "callsign": "E-GS",
+      "callsign": "N-GS",
       "spreadKm": 0
     },
     {
@@ -411,10 +223,10 @@
       "cls": "mech_inf_bde",
       "count": 1,
       "at": [
-        -35.8,
-        -146.6
+        -41.15,
+        175
       ],
-      "callsign": "E-INF",
+      "callsign": "N-INF",
       "spreadKm": 0
     },
     {
@@ -422,10 +234,10 @@
       "cls": "lrad_bn",
       "count": 1,
       "at": [
-        -36.2,
-        -146.4
+        -41.2,
+        175.1
       ],
-      "callsign": "E-SAM",
+      "callsign": "N-SAM",
       "spreadKm": 0
     },
     {
@@ -433,21 +245,21 @@
       "cls": "frigate",
       "count": 2,
       "at": [
-        -36.2,
-        -148.4
+        -41.4,
+        174.85
       ],
-      "callsign": "E-FFG",
-      "spreadKm": 15
+      "callsign": "N-FFG",
+      "spreadKm": 12
     },
     {
       "faction": "RED",
       "cls": "ssk",
       "count": 1,
       "at": [
-        -36.8,
-        -149.5
+        -41.15,
+        174.3
       ],
-      "callsign": "E-SUB",
+      "callsign": "N-SUB",
       "spreadKm": 0
     },
     {
@@ -455,10 +267,10 @@
       "cls": "fighter_mr",
       "count": 2,
       "at": [
-        -36,
-        -146
+        -41.12,
+        175.05
       ],
-      "callsign": "E-FTR",
+      "callsign": "N-FTR",
       "spreadKm": 0
     },
     {
@@ -466,10 +278,10 @@
       "cls": "quad_swarm",
       "count": 2,
       "at": [
-        -35.9,
-        -146.5
+        -41.2,
+        174.95
       ],
-      "callsign": "E-SWM",
+      "callsign": "N-SWM",
       "spreadKm": 0
     },
     {
@@ -477,10 +289,10 @@
       "cls": "coastal_ashm",
       "count": 1,
       "at": [
-        -35.7,
-        -147
+        -41.25,
+        174.75
       ],
-      "callsign": "E-CDCM",
+      "callsign": "N-CDCM",
       "spreadKm": 0
     }
   ],
@@ -493,7 +305,7 @@
       "altKm": 550,
       "incDeg": 97.6,
       "raanDeg": 0,
-      "callsign": "WEYE"
+      "callsign": "SEYE"
     },
     {
       "faction": "RED",
@@ -503,7 +315,7 @@
       "altKm": 550,
       "incDeg": 97.6,
       "raanDeg": 90,
-      "callsign": "EEYE"
+      "callsign": "NEYE"
     },
     {
       "faction": "BLUE",
@@ -512,8 +324,8 @@
       "perPlane": 1,
       "altKm": 35786,
       "incDeg": 0,
-      "raanDeg": -152,
-      "callsign": "WCOM"
+      "raanDeg": 172,
+      "callsign": "SCOM"
     },
     {
       "faction": "RED",
@@ -522,14 +334,14 @@
       "perPlane": 1,
       "altKm": 35786,
       "incDeg": 0,
-      "raanDeg": -148,
-      "callsign": "ECOM"
+      "raanDeg": 176,
+      "callsign": "NCOM"
     }
   ],
   "environment": {
     "seaState": "moderate",
     "fronts": 1,
-    "startHourUtc": 7
+    "startHourUtc": 20
   },
   "rules": {
     "startEscalation": 2,

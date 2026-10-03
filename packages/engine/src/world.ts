@@ -1,6 +1,6 @@
-// Static world: land mask (Natural Earth 110m + scenario landmasses), terrain and weather fields.
+// Static world: land mask (Natural Earth 50m + optional fictional landmasses), terrain and weather fields.
 import { feature } from "topojson-client";
-import land110 from "world-atlas/land-110m.json";
+import land50 from "world-atlas/land-50m.json";
 import type { Scenario } from "@sentinel/protocol";
 import { cos, DEG, exp } from "./dmath";
 import { hash2 } from "./rng";
@@ -29,7 +29,7 @@ function ringsBbox(rings: [number, number][][]): [number, number, number, number
 function loadWorld(): Poly[] {
   if (worldPolys) return worldPolys;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const topo = land110 as any;
+  const topo = land50 as any;
   const fc = feature(topo, topo.objects.land) as unknown as { features: { geometry: { type: string; coordinates: unknown } }[] };
   const out: Poly[] = [];
   for (const f of fc.features) {

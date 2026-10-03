@@ -88,7 +88,8 @@ export function buildGraph(ctx: Ctx, faction: Faction): Graph {
     links.push({ a, b, kind, latencyMs: Math.round(base.lat * (1 + 3 * jam)), reliability: Math.round(rel * 1000) / 1000, jammed: jam > 0.25 });
   };
 
-  const root = hqs.find((h) => !(cyberOn(ctx, faction, h.id)?.kind === "DENY")) ?? null;
+  // If every HQ is denied, a ground station acts as the alternate command post.
+  const root = hqs.find((h) => !(cyberOn(ctx, faction, h.id)?.kind === "DENY")) ?? grounds.find((g) => !(cyberOn(ctx, faction, g.id)?.kind === "DENY")) ?? null;
   // Fixed infrastructure on fiber.
   const fixed = [...hqs, ...grounds];
   for (let i = 0; i < fixed.length; i++)

@@ -8,3 +8,6 @@ allowBuilds:
   esbuild: true
   workerd: true
   core-js-pure: false
+
+# engine ↔ agents-rules depend on each other only through devDependencies (tests).
+ignoreWorkspaceCycles: true
