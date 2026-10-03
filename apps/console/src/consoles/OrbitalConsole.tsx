@@ -61,7 +61,9 @@ export function OrbitalConsole() {
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
-    camera.position.set(0, 1.2, 4.2);
+    // Look at the theater from above its center.
+    const c = useStore.getState().scenario?.map.center ?? [0, 0];
+    camera.position.copy(toXYZ(c[0], c[1]).multiplyScalar(2.9));
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.minDistance = 1.4;
