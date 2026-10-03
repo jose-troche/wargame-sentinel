@@ -1,0 +1,11 @@
+export { Engine, SLICE_DEFAULTS, type TickResult } from "./engine";
+export * from "./aar";
+export * as dmath from "./dmath";
+export { Rng, seedRng } from "./rng";
+export { propagate, footprintKm, periodMin, inFootprint, type SubPoint } from "./orbit";
+export { distKm, bearing, destination, radarHorizonKm } from "./geo";
+export { WorldMap, weatherAt, type TerrainClass } from "./world";
+export { rungRequired } from "./tactical";
+export { roleCanCommand } from "./orders";
+export type { WorldState, Entity, Track, KillChain, PendingOrder } from "./types";
+export { hashEvents } from "./hash";
