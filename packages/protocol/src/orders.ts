@@ -94,3 +94,32 @@ export function extractJson(res: unknown): unknown {
     return null;
   }
 }
+
+/**
+ * Lenient parse of model output: normalizes common slips (a task used as the order type, missing
+ * rationale) and keeps every individually valid order instead of rejecting the whole batch.
+ */
+export function parseOrderBatchLenient(raw: unknown): { batch: OrderBatch; dropped: number } | null {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as { orders?: unknown; rationale?: unknown; confidence?: unknown };
+  const list = Array.isArray(r.orders) ? r.orders : [];
+  const orders: Order[] = [];
+  let dropped = 0;
+  for (const o of list.slice(0, 24)) {
+    const x = { ...(o as Record<string, unknown>) };
+    if (typeof x.type === "string" && (TASKS as readonly string[]).includes(x.type)) {
+      x.task = x.task ?? x.type;
+      x.type = "FRAGO";
+    }
+    if (typeof x.target === "string" && x.target.length > 64) x.target = x.target.slice(0, 64);
+    if (x.point && !Array.isArray(x.point)) delete x.point;
+    for (const k of Object.keys(x)) if (x[k] === null || x[k] === "") delete x[k];
+    const p = OrderSchema.safeParse(x);
+    if (p.success) orders.push(p.data);
+    else dropped++;
+  }
+  const rationale = typeof r.rationale === "string" && r.rationale.trim() ? r.rationale.slice(0, 600) : null;
+  if (!rationale && !orders.length) return null;
+  const confidence = typeof r.confidence === "number" && r.confidence >= 0 && r.confidence <= 1 ? r.confidence : 0.5;
+  return { batch: { orders, rationale: rationale ?? "No rationale given.", confidence }, dropped };
+}

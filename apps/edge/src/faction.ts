@@ -4,7 +4,7 @@
 // Invariant: this file must not import @sentinel/engine (ground-truth types live there).
 import { Agent } from "agents";
 import {
-  OrderBatchSchema, ROLE_INFO, agentId, extractJson, fmtSimTime, type CopForAgents, type Decision, type EventView, type Faction, type Order, type Role,
+  ROLE_INFO, agentId, extractJson, parseOrderBatchLenient, type OrderBatch, fmtSimTime, type CopForAgents, type Decision, type EventView, type Faction, type Order, type Role,
 } from "@sentinel/protocol";
 import { rolesDue, rulePolicy } from "@sentinel/agents-rules";
 import { roleCanCommand } from "@sentinel/catalog";
@@ -118,19 +118,20 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     await session.submitAgentOrders(faction as "BLUE" | "RED", role, decision);
   }
 
-  private async callModel(model: string, messages: { role: "system" | "user" | "assistant"; content: string }[], maxTokens: number, schema: boolean) {
+  /** Per-model call shaping: Qwen3 thinking off, gpt-oss low reasoning effort, plain JSON in the text. */
+  private async callModel(model: string, messages: { role: "system" | "user" | "assistant"; content: string }[], maxTokens: number) {
     const ai = this.env.AI as unknown as { run: (m: string, i: unknown) => Promise<unknown> };
-    const base = { messages, max_tokens: maxTokens };
+    let msgs = messages;
+    const extra: Record<string, unknown> = {};
+    if (model.includes("qwen3")) {
+      msgs = messages.map((m, i) => (i === messages.length - 1 && m.role === "user" ? { ...m, content: `${m.content}\n/no_think` } : m));
+    }
+    if (model.includes("gpt-oss")) extra.reasoning_effort = "low";
     try {
-      if (schema) return await ai.run(model, { ...base, response_format: { type: "json_object" } });
-      return await ai.run(model, base);
-    } catch (err) {
-      // Some models reject response_format or messages; retry in the plainest form.
-      try {
-        return await ai.run(model, base);
-      } catch {
-        return await ai.run(model, { input: messages.map((m) => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n"), max_output_tokens: maxTokens });
-      }
+      return await ai.run(model, { messages: msgs, max_tokens: maxTokens, ...extra });
+    } catch {
+      // Some models reject extra parameters; retry in the plainest form.
+      return await ai.run(model, { messages: msgs, max_tokens: maxTokens });
     }
   }
 
@@ -138,7 +139,7 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     const model = modelFor(role, this.env);
     const messages = buildPrompt(role, cop, this.state.factionName, this.state.memory[role] ?? "");
     const promptChars = messages.reduce((n, m) => n + m.content.length, 0);
-    const maxOut = role === "j2" ? 250 : 600;
+    const maxOut = model.includes("gpt-oss") ? 2000 : role === "j2" ? 400 : 1200;
     const estimate = estimateNeurons(model, promptChars, maxOut);
     const usage = this.env.USAGE.get(this.env.USAGE.idFromName("global"));
     const gate = await usage.canSpend(this.state.sessionId, estimate);
@@ -147,29 +148,20 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
       return null;
     }
     let spent = 0;
-    let parsedBatch: ReturnType<typeof OrderBatchSchema.safeParse> | null = null;
+    let parsed: { batch: OrderBatch; dropped: number } | null = null;
     let raw: unknown = null;
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const msgs = attempt === 0 ? messages : [...messages, { role: "user" as const, content: `Your previous output was not valid JSON for the schema (${parsedBatch?.error?.issues[0]?.message ?? "unparseable"}). Return only the JSON object.` }];
+    for (let attempt = 0; attempt < 2 && !parsed; attempt++) {
+      const msgs = attempt === 0 ? messages : [...messages, { role: "user" as const, content: "Your previous output was not a valid JSON object for the schema. Return only the JSON object." }];
       try {
-        raw = await this.callModel(model, msgs, maxOut, true);
+        raw = await this.callModel(model, msgs, maxOut);
       } catch (err) {
         console.error(JSON.stringify({ session: this.state.sessionId, role, model, error: String(err) }));
         break;
       }
       const u = (raw as { usage?: { prompt_tokens?: number; completion_tokens?: number } })?.usage;
       spent += u?.prompt_tokens ? neuronsFor(model, u.prompt_tokens, u.completion_tokens ?? maxOut / 2) : estimate;
-      const json = extractJson(raw);
-      if (role === "j2" && json === null && raw) {
-        const text = typeof (raw as { response?: unknown }).response === "string" ? ((raw as { response: string }).response) : "";
-        if (text) {
-          parsedBatch = OrderBatchSchema.safeParse({ orders: [], rationale: text.slice(0, 590), confidence: 0.6 });
-          break;
-        }
-      }
-      parsedBatch = OrderBatchSchema.safeParse(json);
-      if (parsedBatch.success) break;
-      if (attempt === 0) {
+      parsed = parseOrderBatchLenient(extractJson(raw));
+      if (!parsed && attempt === 0) {
         const again = await usage.canSpend(this.state.sessionId, estimate);
         if (!again.ok) break;
       }
@@ -179,15 +171,15 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     const promptText = messages.map((m) => m.content).join("\n---\n");
     const responseText = JSON.stringify(raw).slice(0, 8000);
     const logId = crypto.randomUUID();
-    if (!parsedBatch?.success) {
+    if (!parsed) {
       this.sql`INSERT INTO prompt_log (id, role, sim_ms, model, prompt, response, neurons, source, created_at) VALUES (${logId}, ${role}, ${cop.simMs}, ${model}, ${promptText}, ${responseText}, ${spent}, ${"INVALID"}, ${Date.now()})`;
       return null;
     }
     // Keep only orders this role may give to units that exist; note what was dropped.
     const own = new Map(cop.units.map((u) => [u.id, u]));
     const kept: Order[] = [];
-    let dropped = 0;
-    for (const o of parsedBatch.data.orders) {
+    let dropped = parsed.dropped;
+    for (const o of parsed.batch.orders) {
       const unit = own.get(o.to);
       const toAgent = /^(blue|red)\.[a-z0-9]+$/.test(o.to);
       if (["ROE", "ESCALATE", "DEESCALATE", "PRIORITY"].includes(o.type) || toAgent || (unit && roleCanCommand(role, unit))) kept.push(o);
@@ -197,8 +189,8 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     this.sql`DELETE FROM prompt_log WHERE id NOT IN (SELECT id FROM prompt_log ORDER BY created_at DESC LIMIT 500)`;
     return {
       orders: kept,
-      rationale: (dropped ? `${parsedBatch.data.rationale} [${dropped} invalid order(s) dropped]` : parsedBatch.data.rationale).slice(0, 600),
-      confidence: parsedBatch.data.confidence,
+      rationale: (dropped ? `${parsed.batch.rationale} [${dropped} invalid order(s) dropped]` : parsed.batch.rationale).slice(0, 600),
+      confidence: parsed.batch.confidence,
       id: logId, agent: agentId(cop.faction, role), role, faction: cop.faction, simMs: cop.simMs, source: "LLM", model,
       neurons: Math.round(spent * 10) / 10, budgetLeft: left,
     };
@@ -211,17 +203,17 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     const list = notable.slice(0, 60).map((e) => ({ seq: e.seq, t: fmtSimTime(e.simMs), text: e.text.slice(0, 160) }));
     const messages = buildAarPrompt(summary, list);
     const usage = this.env.USAGE.get(this.env.USAGE.idFromName("global"));
-    const estimate = estimateNeurons(model, messages.reduce((n, m) => n + m.content.length, 0), 1500);
+    const estimate = estimateNeurons(model, messages.reduce((n, m) => n + m.content.length, 0), 2500);
     const gate = await usage.canSpend(this.state.sessionId, estimate, "aar");
     if (!gate.ok) return null;
     let raw: unknown;
     try {
-      raw = await this.callModel(model, messages, 1500, true);
+      raw = await this.callModel(model, messages, 2500);
     } catch {
       return null;
     }
     const u = (raw as { usage?: { prompt_tokens?: number; completion_tokens?: number } })?.usage;
-    await usage.record(this.state.sessionId, u?.prompt_tokens ? neuronsFor(model, u.prompt_tokens, u.completion_tokens ?? 1000) : estimate);
+    await usage.record(this.state.sessionId, u?.prompt_tokens ? neuronsFor(model, u.prompt_tokens, u.completion_tokens ?? 1500) : estimate);
     const json = extractJson(raw) as Partial<AarNarrative> | null;
     this.sql`INSERT INTO prompt_log (id, role, sim_ms, model, prompt, response, neurons, source, created_at) VALUES (${crypto.randomUUID()}, ${"aar"}, ${0}, ${model}, ${messages[1].content}, ${JSON.stringify(raw).slice(0, 8000)}, ${estimate}, ${"AAR"}, ${Date.now()})`;
     if (!json || typeof json.summary !== "string" || !Array.isArray(json.turningPoints)) return null;

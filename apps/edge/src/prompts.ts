@@ -48,8 +48,8 @@ export function buildPrompt(role: Role, cop: CopForAgents, factionName: string, 
     `SUSTAINMENT: ${cop.shortfallUnits} units out of supply. NETWORK: mean order latency ${Math.round(cop.meanLatencyMs / 60000)} min, ${cop.unreachable.length} unreachable.`,
     `RECENT TRIGGERS: ${cop.triggers.join("; ") || "none"}`,
     `CURRENT PLAN MEMORY: ${memory || "none yet"}`,
-    `OUTPUT SCHEMA: {"orders":[{"type":"OPORD|FRAGO|ATO|STO|ROE|ESCALATE|DEESCALATE|PRIORITY","to":"<unit id from your list or agent id>","task":"${TASKS.join("|")}","point":[lat,lon],"target":"<track id or unit id>","window_sim_h":[start,end],"roe":"WEAPONS_HOLD|WEAPONS_TIGHT|WEAPONS_FREE","note":"..."}],"rationale":"<=60 words, cite track/unit ids","confidence":0..1}`,
-    `Issue at most 12 orders. Only use unit ids from your list. Respect the escalation rung.`,
+    `OUTPUT: one compact JSON object, no markdown, no extra whitespace. Omit fields you do not need.\n{"orders":[{"type":"OPORD|FRAGO|ATO|STO|ROE|ESCALATE|DEESCALATE|PRIORITY","to":"<unit id>","task":"${TASKS.join("|")}","point":[lat,lon],"target":"<track or unit id>","window_sim_h":[start,end],"roe":"WEAPONS_HOLD|WEAPONS_TIGHT|WEAPONS_FREE"}],"rationale":"<=40 words citing ids","confidence":0.0-1.0}`,
+    `Issue at most 6 orders. Use only unit ids from your list. Respect the escalation rung.`,
   ].join("\n\n");
   return [
     { role: "system" as const, content: GUARDRAIL },

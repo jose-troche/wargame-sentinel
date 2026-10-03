@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OrderBatchSchema, ROLES, extractJson } from "@sentinel/protocol";
+import { OrderBatchSchema, ROLES, extractJson, parseOrderBatchLenient } from "@sentinel/protocol";
 import { Engine } from "@sentinel/engine";
 import { getScenario } from "@sentinel/scenarios";
 import { rulePolicy, rolesDue } from "../src";
@@ -38,4 +38,17 @@ describe("agent output contract (recorded model outputs)", () => {
       expect(parsed.success).toBe(f.valid);
     });
   }
+});
+
+describe("lenient parsing of real model slips", () => {
+  it("keeps valid orders, fixes a task used as the type, drops the rest", () => {
+    const raw = { response: '{"orders":[{"type":"STRIKE","to":"B-S-DDG-1","target":"TB-0001"},{"type":"FRAGO","to":"B-S-FTR-1","task":"CAP","point":[-41.4,174.5]},{"type":"FRAGO","to":"x","task":"NUKE"}],"rationale":"Strike TB-0001"}' };
+    const p = parseOrderBatchLenient(extractJson(raw))!;
+    expect(p.batch.orders).toHaveLength(2);
+    expect(p.batch.orders[0]).toMatchObject({ type: "FRAGO", task: "STRIKE" });
+    expect(p.dropped).toBe(1);
+  });
+  it("returns null for unusable output", () => {
+    expect(parseOrderBatchLenient(extractJson({ response: "no json here" }))).toBeNull();
+  });
 });
