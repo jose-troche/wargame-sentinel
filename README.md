@@ -137,7 +137,7 @@ After that, `pnpm deploy` rebuilds and redeploys. The included GitHub Actions wo
 Optional extras:
 
 - **R2 archive:** R2 is not enabled on this account, so event-log archives and snapshots are stored as gzip chunks in D1. To use R2 instead, enable it in the dashboard, run `wrangler r2 bucket create sentinel-archive`, and uncomment the `ARCHIVE` binding.
-- **Turnstile:** set `TURNSTILE_SITEKEY` in `wrangler.jsonc` and `wrangler secret put TURNSTILE_SECRET`. Session creation is checked only when the secret is present.
+- **Turnstile:** active in production on session creation (managed widget `0x4AAAAAAFMyDmExnFzDStfE` for `warfare-sentinel.troche.workers.dev`, `localhost` and `127.0.0.1`). The lobby holds the online buttons until the check passes, and `POST /api/sessions` verifies the token with siteverify using the `TURNSTILE_SECRET` Worker secret. To disable it, clear `TURNSTILE_SITEKEY` and delete the secret. For local testing, use Cloudflare's always-pass test keys (sitekey `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`).
 - **Model choice:** model ids are variables in `wrangler.jsonc` (`MODEL_OPERATIONAL`, `MODEL_STRATEGIC`, `MODEL_SUMMARY`).
 
 ### Free-tier budget

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SCENARIO_SUMMARIES, getScenario } from "@sentinel/scenarios";
 import type { View } from "@sentinel/protocol";
 import { api } from "../lib/api";
 import { getUser, setUserName } from "../lib/identity";
 import { navigate } from "../router";
+import { Turnstile, type TurnstileHandle } from "../lib/turnstile";
 
 export function Lobby() {
   const [sel, setSel] = useState(SCENARIO_SUMMARIES[0].id);
@@ -18,12 +19,16 @@ export function Lobby() {
   const [mine, setMine] = useState<{ id: string; scenario_id: string; profile: string; status: string; created_at: number; parent: string | null }[]>([]);
   const [recent, setRecent] = useState<typeof mine>([]);
   const [online, setOnline] = useState(true);
+  const [siteKey, setSiteKey] = useState<string | null>(null);
+  const [tsToken, setTsToken] = useState<string | null>(null);
+  const ts = useRef<TurnstileHandle>(null);
   const scn = SCENARIO_SUMMARIES.find((s) => s.id === sel)!;
   const full = getScenario(sel)!;
   const profileA = scn.entities <= 300;
 
   useEffect(() => {
     api.sessions(getUser().id).then((r) => setMine(r.sessions)).catch(() => setOnline(false));
+    api.config().then((c) => setSiteKey(c.turnstileSiteKey)).catch(() => undefined);
     api.sessions().then((r) => setRecent(r.sessions.filter((s) => s.status !== "ENDED").slice(0, 8))).catch(() => undefined);
   }, []);
 
@@ -32,14 +37,16 @@ export function Lobby() {
     setErr(null);
     setUserName(name);
     try {
-      const created = await api.createSession({ scenarioId: sel, profile, seed, rulesOnly, user: { ...getUser(), name } });
+      const created = await api.createSession({ scenarioId: sel, profile, seed, rulesOnly, user: { ...getUser(), name }, turnstile: tsToken ?? undefined });
       navigate(`/s/${created.session.id}`, created);
     } catch (e) {
       setErr(String((e as Error).message));
     } finally {
       setBusy(false);
+      ts.current?.reset(); // tokens are single-use
     }
   };
+  const needsCheck = !!siteKey && !tsToken;
 
   return (
     <div className="lobby">
@@ -82,9 +89,15 @@ export function Lobby() {
           </div>
           <div className="row wrap" style={{ marginTop: 10 }}>
             <button className="primary" onClick={() => navigate(`/local/${sel}/${seed}`)}>Play locally</button>
-            <button onClick={() => create("B")} disabled={busy || !online} title="Engine runs in your browser; Cloudflare hosts the hub and the LLM agents">Host online (Profile B)</button>
-            <button onClick={() => create("A")} disabled={busy || !online || !profileA} title={profileA ? "Engine runs on the edge in alarm-sized slices (≤300 entities, 10-minute ticks)" : "Over 300 entities: Profile A is not available on the free tier"}>Edge-authoritative (Profile A)</button>
+            <button onClick={() => create("B")} disabled={busy || !online || needsCheck} title="Engine runs in your browser; Cloudflare hosts the hub and the LLM agents">Host online (Profile B)</button>
+            <button onClick={() => create("A")} disabled={busy || !online || !profileA || needsCheck} title={profileA ? "Engine runs on the edge in alarm-sized slices (≤300 entities, 10-minute ticks)" : "Over 300 entities: Profile A is not available on the free tier"}>Edge-authoritative (Profile A)</button>
           </div>
+          {siteKey && online && (
+            <div style={{ marginTop: 10 }}>
+              <Turnstile ref={ts} siteKey={siteKey} onToken={setTsToken} />
+              {needsCheck && <div className="dim" style={{ fontSize: 11 }}>Complete the check to create an online session.</div>}
+            </div>
+          )}
           <p className="dim" style={{ fontSize: 12, marginTop: 8 }}>
             Local play runs entirely in your browser with rule-based agents, deterministic rewind and branching. Online sessions add LLM commanders on Workers AI (with a daily neuron budget and automatic rule fallback), faction views for other players, and a server-side event log and AAR.
           </p>

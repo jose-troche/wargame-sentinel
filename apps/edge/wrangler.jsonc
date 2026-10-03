@@ -33,7 +33,7 @@
     "MODEL_OPERATIONAL": "@cf/qwen/qwen3-30b-a3b-fp8",
     "MODEL_STRATEGIC": "@cf/openai/gpt-oss-120b",
     "MODEL_SUMMARY": "@cf/ibm-granite/granite-4.0-h-micro",
-    "TURNSTILE_SITEKEY": ""
+    "TURNSTILE_SITEKEY": "0x4AAAAAAFMyDmExnFzDStfE"
   },
   "observability": { "enabled": true, "head_sampling_rate": 0.1 }
 }
