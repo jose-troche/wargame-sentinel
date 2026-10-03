@@ -63,7 +63,8 @@ export interface RationaleFrame { t: "RATIONALE"; decision: Decision }
 export interface OrderFrame { t: "ORDER"; seat: string; batch: OrderBatch; decision?: Decision }
 export interface ControlFrame {
   t: "CONTROL";
-  op: "pause" | "resume" | "speed" | "step" | "next_event" | "branch" | "seat" | "inject" | "end" | "rules_only";
+  op: "pause" | "resume" | "speed" | "step" | "next_event" | "branch" | "seat" | "inject" | "end" | "rules_only" | "snapshot_request";
+  view?: View;
   speed?: number;
   seat?: string;
   take?: boolean;
@@ -74,12 +75,15 @@ export interface ControlFrame {
 export interface StatusFrame { t: "STATUS"; meta: SessionMeta; agents?: AgentStatus[] }
 export interface ErrorFrame { t: "ERROR"; message: string }
 export interface PingFrame { t: "PING" }
+/** Host → hub at session end: the rule-based AAR plus the notable events the AAR Analyst may cite. */
+export interface AarFrame { t: "AAR"; report: unknown; notable: EventView[] }
 /** Hub → host: snapshot to resume from after a restart. */
-export interface ResumeFrame { t: "RESUME"; snapshot?: Uint8Array; orders: OrderFrame[] }
+export interface ResumeOrder { tick: number; faction: "BLUE" | "RED"; from: string; batch: OrderBatch; source: string }
+export interface ResumeFrame { t: "RESUME"; snapshot?: Uint8Array; orders: ResumeOrder[]; pauseAtTick?: number; speed: number; paused: boolean }
 
 export type Frame =
   | HelloFrame | SnapshotFrame | DeltaFrame | EventFrame | MsgFrame | RationaleFrame
-  | OrderFrame | ControlFrame | StatusFrame | ErrorFrame | PingFrame | ResumeFrame;
+  | OrderFrame | ControlFrame | StatusFrame | ErrorFrame | PingFrame | ResumeFrame | AarFrame;
 
 export function encode(frame: unknown): Uint8Array {
   return mpEncode(frame, { ignoreUndefined: true });

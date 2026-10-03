@@ -1,25 +1,12 @@
 // Order intake: validates an order batch against the sender's role and turns each order into
 // a C2 message that reaches its unit only after network latency (or is held if unreachable).
 import { HOUR_MS, parseAgentId, ROLE_INFO, type Faction, type Order, type Role } from "@sentinel/protocol";
-import { getClass } from "@sentinel/catalog";
+import { roleCanCommand } from "@sentinel/catalog";
 import type { Ctx } from "./ctx";
 import { sendOrder } from "./c2";
 import { resolvePoint } from "./tactical";
 import { setEscalation } from "./politics";
 import type { Entity, PendingOrder, TaskState } from "./types";
-
-export function roleCanCommand(role: Role | "human", e: Entity): boolean {
-  if (role === "human" || role === "jfc" || role === "nca") return true;
-  const c = getClass(e.cls);
-  switch (role) {
-    case "lcc": return e.domain === "LAND" || e.cls === "ugv";
-    case "mcc": return e.domain === "SEA" || e.cls === "usv" || e.cls === "uuv";
-    case "acc": return e.domain === "AIR" || (e.domain === "DRONE" && !["usv", "uuv", "ugv"].includes(e.cls));
-    case "scc": return e.domain === "SPACE";
-    case "cyber": return c.tags.includes("JAMMER") || e.cls === "cyber_unit" || e.cls === "decoy_group" || c.effectors.some((x) => x.type === "JAMMER");
-    default: return false;
-  }
-}
 
 function resolveUnits(ctx: Ctx, faction: Faction, to: string): Entity[] {
   if (to.startsWith("cls:")) {

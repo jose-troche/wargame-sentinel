@@ -3,3 +3,8 @@ packages:
   - packages/*
   - scenarios
   - tools
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+  core-js-pure: false

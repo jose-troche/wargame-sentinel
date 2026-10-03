@@ -38,9 +38,10 @@ export class Engine {
     this.ctx = new Ctx(state, scenario, new WorldMap(scenario, state.seed));
   }
 
-  static create(scenario: Scenario, seed: number): Engine {
+  static create(scenario: Scenario, seed: number, opts: { tickMs?: number } = {}): Engine {
     const map = new WorldMap(scenario, seed);
     const state = createWorld(scenario, seed, map);
+    if (opts.tickMs && HOUR_MS % opts.tickMs === 0) state.tickMs = opts.tickMs;
     const eng = new Engine(scenario, state);
     eng.ctx.emit({ type: "SCENARIO_START", vis: ["WHITE", "BLUE", "RED"], text: `${scenario.name} begins (seed ${seed})`, notable: true });
     refreshC2(eng.ctx);

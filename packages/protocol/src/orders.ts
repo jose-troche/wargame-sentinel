@@ -76,6 +76,12 @@ export function extractJson(res: unknown): unknown {
     if (typeof r.response === "string") return extractJson(r.response);
     const choices = r.choices as { message?: { content?: string } }[] | undefined;
     if (choices?.[0]?.message?.content) return extractJson(choices[0].message.content);
+    // Responses-API style output (e.g. gpt-oss): find the first output_text.
+    if (typeof r.output_text === "string") return extractJson(r.output_text);
+    const output = r.output as { type?: string; content?: { type?: string; text?: string }[] }[] | undefined;
+    if (Array.isArray(output)) {
+      for (const o of output) for (const c of o.content ?? []) if (c.text && c.text.includes("{")) return extractJson(c.text);
+    }
     return null;
   }
   if (typeof res !== "string") return null;

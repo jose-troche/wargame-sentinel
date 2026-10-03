@@ -6,6 +6,5 @@ export { propagate, footprintKm, periodMin, inFootprint, type SubPoint } from ".
 export { distKm, bearing, destination, radarHorizonKm } from "./geo";
 export { WorldMap, weatherAt, type TerrainClass } from "./world";
 export { rungRequired } from "./tactical";
-export { roleCanCommand } from "./orders";
 export type { WorldState, Entity, Track, KillChain, PendingOrder } from "./types";
 export { hashEvents } from "./hash";

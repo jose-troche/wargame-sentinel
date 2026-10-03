@@ -1,0 +1,26 @@
+{
+  "name": "@sentinel/edge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@sentinel/agents-rules": "workspace:*",
+    "@sentinel/catalog": "workspace:*",
+    "@sentinel/engine": "workspace:*",
+    "@sentinel/protocol": "workspace:*",
+    "@sentinel/scenarios": "workspace:*",
+    "agents": "^0.24.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20261002.1",
+    "wrangler": "^4.147.0"
+  }
+}
