@@ -60,12 +60,11 @@ test("fog of war: the Blue view shows only Blue units", async ({ page }) => {
   await expect.poll(() => clockMs(page), { timeout: 30_000 }).toBeGreaterThan(3_600_000);
   await page.getByRole("button", { name: "■ Blue" }).first().click();
   await expect(page.locator(".console-head").filter({ hasText: "BLUE common operational picture" })).toBeVisible();
-  const factions = await page.evaluate(() => {
+  // MapLibre re-tiles the source asynchronously after the view switch, so poll until it settles.
+  await expect.poll(() => page.evaluate(() => {
     const m = (window as unknown as { __map?: { querySourceFeatures(id: string): { properties: { icon: string } }[] } }).__map!;
     return [...new Set(m.querySourceFeatures("entities").map((f) => f.properties.icon.split("|")[0]))];
-  });
-  // Own units are friendly ("F"); enemies only appear in the separate tracks layer.
-  expect(factions).toEqual(["F"]);
+  }), { timeout: 15_000 }).toEqual(["F"]); // own units are friendly; enemies appear only as tracks
 });
 
 test("rewind replays deterministically to an earlier time", async ({ page }) => {
