@@ -8,5 +8,10 @@
     "bench": "vitest run --config vitest.bench.config.ts",
     "typecheck": "tsc -p tsconfig.json",
     "test": "echo 'tools: no unit tests'"
+  },
+  "devDependencies": {
+    "@sentinel/engine": "workspace:*",
+    "@sentinel/agents-rules": "workspace:*",
+    "@sentinel/scenarios": "workspace:*"
   }
 }
