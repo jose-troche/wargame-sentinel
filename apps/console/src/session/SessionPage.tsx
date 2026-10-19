@@ -18,10 +18,14 @@ import { AgentConsole } from "../consoles/AgentConsole";
 import { StrategicDashboard } from "../consoles/StrategicDashboard";
 import { EventLog } from "../consoles/EventLog";
 import { AarPanel } from "../consoles/AarPanel";
-import { FACTOR_HELP, TEACH, explainFormula } from "../lib/explain";
+import { TEACH } from "../lib/explain";
+import { ExplainModal } from "./Explain";
 import { simTime } from "../lib/format";
 import { getUser } from "../lib/identity";
 import { navigate } from "../router";
+import { useGame } from "../game/store";
+import { commanderSeat } from "../game/actions";
+import { CommandPage } from "../command/CommandPage";
 
 const PANELS: { id: string; title: string; C: React.FC }[] = [
   { id: "map", title: "1 · Global Theater Map", C: TheaterMap },
@@ -71,7 +75,38 @@ function isLightTheme() {
   } catch { return false; }
 }
 
+/**
+ * A session shows the command post when the player commands a side, and the expert layout (the twelve
+ * consoles in dockable panels) for referees and analysts, or when a commander opens it from the menu.
+ */
 export function SessionPage() {
+  const mode = useStore((s) => s.mode);
+  const meta = useStore((s) => s.meta);
+  const side = useGame((s) => s.side);
+  const [expert, setExpert] = useState(false);
+  const connected = useStore((s) => s.connected);
+  // Online: the commander holds their side's command seat, so the AI commander stands down.
+  useEffect(() => {
+    if (!side || mode === "local" || !connected) return;
+    const seat = commanderSeat(side);
+    const st = useStore.getState();
+    const a = st.agents.find((x) => x.id === seat);
+    if (!a || a.seat === "AI") controller.seat(seat, true);
+  }, [side, mode, connected]);
+  if (!mode || !meta) return <div className="empty">Loading session…</div>;
+  if (side && !expert) {
+    return <CommandPage onExpert={(review) => {
+      if (review) {
+        controller.unlockTruth();
+        controller.switchView("WHITE");
+      }
+      setExpert(true);
+    }} />;
+  }
+  return <AnalystPage onBack={side ? () => { const st = useStore.getState(); if (st.view !== side && st.allowedViews.includes(side)) controller.switchView(side); setExpert(false); } : undefined} />;
+}
+
+function AnalystPage({ onBack }: { onBack?: () => void }) {
   const mode = useStore((s) => s.mode);
   const meta = useStore((s) => s.meta);
   const toast = useStore((s) => s.toast);
@@ -100,7 +135,7 @@ export function SessionPage() {
   if (!mode || !meta) return <div className="empty">Loading session…</div>;
   return (
     <div className="app">
-      <TopBar />
+      <TopBar onBack={onBack} />
       <div className="dock">
         <DockviewReact components={components} onReady={(e: DockviewReadyEvent) => { apiRef.current = e.api; layout(e.api); }} theme={light ? themeLight : themeDark} />
       </div>
@@ -114,7 +149,7 @@ export function SessionPage() {
 
 const SPEEDS = [1, 10, 60, 300, 600, 1200, 3600];
 
-function TopBar() {
+function TopBar({ onBack }: { onBack?: () => void }) {
   const meta = useStore((s) => s.meta)!;
   const mode = useStore((s) => s.mode);
   const view = useStore((s) => s.view);
@@ -129,6 +164,7 @@ function TopBar() {
   const ended = useStore((s) => s.ended);
   const set = useStore((s) => s.set);
   const owner = mode === "local" || meta.owner === getUser().id;
+  const referee = !useGame((s) => s.side) || ended;
   const [injectOpen, setInjectOpen] = useState(false);
   const status = mode === "local" ? (playing ? "RUNNING" : ended ? "ENDED" : "PAUSED") : meta.status;
 
@@ -139,7 +175,8 @@ function TopBar() {
 
   return (
     <header className="topbar">
-      <button className="ghost brand" onClick={() => { controller.stop(); navigate("/"); }} title="Back to lobby">WARFARE SENTINEL</button>
+      <button className="ghost brand" onClick={() => { controller.stop(); navigate("/"); }} title="Back to the start">WARFARE SENTINEL</button>
+      {onBack && <button className="primary small" onClick={onBack}>← Command post</button>}
       <span className="muted">{meta.scenarioName}</span>
       <span className={`pill ${status === "RUNNING" ? "ok" : status === "ENDED" ? "bad" : "warn"}`}>{mode === "local" ? "LOCAL" : `PROFILE ${meta.profile}`} · {status}</span>
       {mode !== "local" && <span className={`pill ${connected ? "ok" : "bad"}`} title="Hub connection">{connected ? "online" : "reconnecting"}</span>}
@@ -159,9 +196,9 @@ function TopBar() {
           <button className="small" onClick={() => controller.nextEvent()} title="Run to the next notable event (n)">Next event</button>
           <select value={speed} onChange={(e) => controller.setSpeed(+e.target.value)} aria-label="Speed">{SPEEDS.map((s) => <option key={s} value={s}>{s}×</option>)}</select>
           {playing && actual > 0 && Math.abs(actual - speed) / speed > 0.2 && <span className="dim" title="Actual simulated speed">≈{actual}×</span>}
-          <button className="small" onClick={() => setInjectOpen((x) => !x)}>Inject</button>
+          {referee && <button className="small" onClick={() => setInjectOpen((x) => !x)}>Inject</button>}
           {mode !== "local" && <label className="row small" title="Zero LLM calls: every agent uses its rule-based policy"><input type="checkbox" checked={meta.rulesOnly} onChange={(e) => controller.rulesOnly(e.target.checked)} /> rules only</label>}
-          <button className="small danger" onClick={() => { if (confirm("End the scenario and produce the after-action review?")) controller.end(); }}>End</button>
+          {referee && <button className="small danger" onClick={() => { if (confirm("End the scenario and produce the after-action review?")) controller.end(); }}>End</button>}
         </div>
       )}
       {!owner && <span className="dim">{playing ? `${speed}×` : "paused"} · time is controlled by the session owner</span>}
@@ -206,7 +243,9 @@ function Timeline() {
   const [drag, setDrag] = useState<number | null>(null);
   const total = scenario.durationH * HOUR_MS;
   const tickMs = scenario.rules.tickMs;
-  const owner = mode === "local" || meta.owner === getUser().id;
+  const ended = useStore((s) => s.ended);
+  const commanding = !!useGame((s) => s.side) && !ended;
+  const owner = (mode === "local" || meta.owner === getUser().id) && !commanding;
   const notable = useMemo(() => events.filter((e) => e.notable).slice(-200), [events]);
   const value = drag ?? simMs;
   const commit = async (ms: number) => {
@@ -241,32 +280,6 @@ function Timeline() {
       <span className="mono">{simTime(value)}</span>
       <span className="dim" style={{ fontSize: 11 }}>{mode === "local" ? "drag back to rewind & branch" : mode === "host" ? "drag back to branch" : "live"}</span>
     </footer>
-  );
-}
-
-function ExplainModal() {
-  const e = useStore((s) => s.explain)!;
-  const set = useStore((s) => s.set);
-  const formula = explainFormula(e);
-  const teach = TEACH[e.type];
-  return (
-    <div className="modal-back" onClick={() => set({ explain: null })}>
-      <div className="modal" onClick={(ev) => ev.stopPropagation()} role="dialog" aria-label="Explain">
-        <div className="row"><h3>Why: {e.type.replace(/_/g, " ").toLowerCase()}</h3><span className="mono dim" style={{ marginLeft: "auto" }}>#{e.seq} · {simTime(e.simMs)}</span></div>
-        <p>{e.text}</p>
-        {formula && <p className="mono" style={{ fontSize: 12, background: "var(--bg-2)", padding: 8, borderRadius: 6 }}>{formula}</p>}
-        {e.factors && (
-          <table className="grid"><thead><tr><th>Factor</th><th>Value</th><th>Meaning</th></tr></thead>
-            <tbody>{Object.entries(e.factors).map(([k, v]) => <tr key={k}><td className="mono">{k}</td><td className="mono">{String(v)}</td><td className="dim">{FACTOR_HELP[k] ?? ""}</td></tr>)}</tbody></table>
-        )}
-        {teach && <p className="muted" style={{ marginTop: 10 }}><b>{teach.title}.</b> {teach.body}</p>}
-        {e.rng !== undefined && <p className="dim" style={{ fontSize: 11 }}>Random draws used: {e.rng}. Same seed and orders reproduce this exactly.</p>}
-        <div className="row" style={{ justifyContent: "flex-end" }}>
-          {e.entities?.[0] && <button onClick={() => set({ selected: e.entities![0], explain: null })}>Select unit</button>}
-          <button className="primary" onClick={() => set({ explain: null })}>Close</button>
-        </div>
-      </div>
-    </div>
   );
 }
 

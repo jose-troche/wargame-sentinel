@@ -2,6 +2,7 @@
 // Entity maps are mutated in place and `version` bumps trigger re-renders, which keeps 5,000-symbol
 // updates cheap.
 import { create } from "zustand";
+import { scrubEvent } from "@sentinel/protocol";
 import type {
   AgentStatus, AirView, C2View, DebrisView, Decision, EntityView, EventView, EwFieldView, KillChainView, LogisticsView, MessageEnvelope,
   PoliticsView, SatelliteView, Scenario, SessionMeta, TrackView, View, ViewDelta,
@@ -123,7 +124,7 @@ export const useStore = create<StoreState>((set, get) => ({
   addEvents: (evs) => {
     const s = get();
     const seen = new Set(s.events.slice(-500).map((e) => `${e.seq}:${e.type}`));
-    const fresh = evs.filter((e) => e.vis.includes(s.view) && !seen.has(`${e.seq}:${e.type}`));
+    const fresh = evs.filter((e) => e.vis.includes(s.view) && !seen.has(`${e.seq}:${e.type}`)).map((e) => scrubEvent(e, s.view));
     if (!fresh.length) return;
     let events = s.events.concat(fresh);
     if (events.length > 6000) events = events.slice(-5000);
@@ -148,6 +149,11 @@ export const useStore = create<StoreState>((set, get) => ({
 }));
 
 /** Simulated time interpolated between deltas for smooth animation (orbits, swarms). */
+/** Events a view may see, with entity references scrubbed to that view's own units and tracks. */
+export function eventsForView(events: EventView[], view: View, limit = 5000): EventView[] {
+  return events.filter((e) => e.vis.includes(view)).slice(-limit).map((e) => scrubEvent(e, view));
+}
+
 export function liveSimMs(): number {
   const s = useStore.getState();
   if (!s.playing || s.ended) return s.simMs;

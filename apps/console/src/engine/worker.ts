@@ -209,7 +209,12 @@ ctx.onmessage = (ev: MessageEvent<ToWorker>) => {
         pauseAtTick = m.resume?.pauseAtTick;
         playing = m.resume ? !m.resume.paused || pauseAtTick !== undefined : false;
         if (pauseAtTick !== undefined) speed = Math.max(speed, 3600);
+        if (m.humanSeats) humanSeats = new Set(m.humanSeats);
         commander = new RulesCommander(humanSeats);
+        if (m.opponent && !m.resume) {
+          const f = m.opponent.faction.toLowerCase();
+          engine.submit({ faction: m.opponent.faction, from: `${f}.nca`, source: "RULES", batch: { orders: [{ type: "INTENT", to: `${f}.jfc`, posture: m.opponent.posture }], rationale: `Opening posture: ${m.opponent.posture.toLowerCase()}.`, confidence: 0.8 } });
+        }
         maxTick = engine.state.tick;
         for (const v of ["WHITE", "BLUE", "RED"] as View[]) post({ type: "full", view: v, delta: engine.viewSnapshot(v) });
         emitFrame(true);

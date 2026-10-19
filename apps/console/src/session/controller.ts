@@ -4,10 +4,10 @@
 //  viewer — any other seat (or any Profile A client): state arrives over the hub WebSocket.
 import {
   decode, encode, PROTOCOL_VERSION, type ControlFrame, type Decision, type DeltaFrame, type EventView, type Frame, type OrderBatch,
-  type ResumeFrame, type SessionMeta, type View, type ViewDelta,
+  type Posture, type ResumeFrame, type SessionMeta, type View, type ViewDelta,
 } from "@sentinel/protocol";
 import { getScenario } from "@sentinel/scenarios";
-import { useStore } from "../store";
+import { eventsForView, useStore } from "../store";
 import { mergeDelta } from "../lib/merge";
 import type { FromWorker, ToWorker } from "../engine/messages";
 import { api, type CreatedSession } from "../lib/api";
@@ -74,16 +74,36 @@ export class SessionController {
 
   // ------------------------------------------------------------------ start
 
-  startLocal(scenarioId: string, seed: number) {
+  /**
+   * Local play. Without a side this is the referee/analyst sandbox (ground truth, every view). With a
+   * side the player commands that faction: its commander seat is human-held, the view is fogged, and
+   * the computer opponent opens with the given posture.
+   */
+  startLocal(scenarioId: string, seed: number, game?: { side: "BLUE" | "RED"; speed: number; opponentPosture: Posture }) {
     const scenario = getScenario(scenarioId)!;
+    const speed = game?.speed ?? 600;
     const meta: SessionMeta = {
-      id: "local", scenarioId, scenarioName: scenario.name, seed, profile: "B", status: "PAUSED", speed: 600, simMs: 0, tick: 0, owner: getUser().id,
+      id: "local", scenarioId, scenarioName: scenario.name, seed, profile: "B", status: "PAUSED", speed, simMs: 0, tick: 0, owner: getUser().id,
       createdAt: Date.now(), hostConnected: true, rulesOnly: true, lastSeq: 0,
     };
-    useStore.getState().reset({ mode: "local", meta, scenario, view: "WHITE", allowedViews: ["WHITE", "BLUE", "RED"], tokens: {}, playing: false, speed: 600 });
-    useStore.getState().set({ agents: localAgents() });
+    const seat = game ? `${game.side.toLowerCase()}.nca` : null;
+    useStore.getState().reset({
+      mode: "local", meta, scenario, view: game?.side ?? "WHITE", allowedViews: game ? [game.side] : ["WHITE", "BLUE", "RED"], tokens: {}, playing: false, speed,
+      humanSeats: seat ? [seat] : [],
+    });
+    useStore.getState().set({ agents: localAgents().map((a) => (a.id === seat ? { ...a, seat: getUser().id } : a)) });
     this.spawnWorker();
-    this.toWorker({ type: "init", scenarioId, seed, mode: "local", speed: 600 });
+    this.toWorker({
+      type: "init", scenarioId, seed, mode: "local", speed, humanSeats: seat ? [seat] : undefined,
+      opponent: game ? { faction: game.side === "BLUE" ? "RED" : "BLUE", posture: game.opponentPosture } : undefined,
+    });
+  }
+
+  /** After the game ends, the referee's ground truth becomes available for review. */
+  unlockTruth() {
+    const st = useStore.getState();
+    if (st.allowedViews.includes("WHITE")) return;
+    if (st.mode === "local") st.set({ allowedViews: ["WHITE", ...st.allowedViews] });
   }
 
   startOnline(created: CreatedSession, preferView?: View) {
@@ -169,7 +189,7 @@ export class SessionController {
         st.addDecision(m.decision);
         break;
       case "rewound":
-        st.set({ allEvents: m.events, events: m.events.filter((e) => e.vis.includes(st.view)).slice(-5000) });
+        st.set({ allEvents: m.events, events: eventsForView(m.events, st.view) });
         break;
       case "aar":
         st.set({ aar: { report: m.report, narrative: null } });
@@ -318,7 +338,7 @@ export class SessionController {
     st.reset({ ...pick(st), view });
     if (st.mode === "local" || st.mode === "host") {
       this.toWorker({ type: "view", view });
-      useStore.getState().set({ events: st.allEvents.filter((e) => e.vis.includes(view)).slice(-5000), decisions: [] });
+      useStore.getState().set({ events: eventsForView(st.allEvents, view), decisions: [] });
     } else {
       this.connectViewer(view);
     }

@@ -1,9 +1,15 @@
-import type { CopForAgents, Decision, EventView, OrderBatch, ResumeOrder, View, ViewDelta } from "@sentinel/protocol";
+import type { CopForAgents, Decision, EventView, OrderBatch, Posture, ResumeOrder, View, ViewDelta } from "@sentinel/protocol";
 
 export type WorkerMode = "local" | "host";
 
 export type ToWorker =
-  | { type: "init"; scenarioId: string; seed: number; mode: WorkerMode; speed: number; resume?: { snapshot?: Uint8Array; orders: ResumeOrder[]; pauseAtTick?: number; paused: boolean } }
+  | {
+      type: "init"; scenarioId: string; seed: number; mode: WorkerMode; speed: number; resume?: { snapshot?: Uint8Array; orders: ResumeOrder[]; pauseAtTick?: number; paused: boolean };
+      /** Seats a human holds from the start (the player's commander seat). */
+      humanSeats?: string[];
+      /** The computer opponent's commander's intent, issued as its first order. */
+      opponent?: { faction: "BLUE" | "RED"; posture: Posture };
+    }
   | { type: "play"; playing: boolean }
   | { type: "speed"; speed: number }
   | { type: "step" }
