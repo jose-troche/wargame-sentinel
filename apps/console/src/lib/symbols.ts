@@ -49,6 +49,15 @@ export function symbolKey(affil: Affil, clsOrDomain: string, fill: string) {
   return `${affil}|${clsOrDomain}|${fill}`;
 }
 
+const urls = new Map<string, string>();
+
+/** PNG data URL for a symbol, encoded once per key (encoding is far too slow to repeat per render). */
 export function symbolDataUrl(key: string, size = 22): string {
-  return symbolCanvas(key, size).canvas.toDataURL();
+  const k = `${key}@${size}`;
+  let u = urls.get(k);
+  if (!u) {
+    u = symbolCanvas(key, size).canvas.toDataURL();
+    urls.set(k, u);
+  }
+  return u;
 }

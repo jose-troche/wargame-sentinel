@@ -1,105 +1,12 @@
 // Console 1 — Global Theater Map: the common operational picture on a 3D globe. In a faction view
 // enemies appear only as tracks with uncertainty ellipses; the White view shows ground truth.
 import { useEffect, useRef, useState } from "react";
-import * as maplibregl from "maplibre-gl";
-import type { GeoJSONSource, StyleSpecification, MapLayerMouseEvent, MapMouseEvent, MapStyleImageMissingEvent } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-// MapLibre 6 runs its tile/GeoJSON work in a separate module worker; let Vite bundle it.
-import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { feature } from "topojson-client";
-import countries50 from "world-atlas/countries-50m.json";
-import { cellToBoundary, latLngToCell } from "h3-js";
-import type { EntityView, TrackView } from "@sentinel/protocol";
+import type { GeoJSONSource, MapLayerMouseEvent, MapMouseEvent } from "maplibre-gl";
 import { useStore } from "../store";
+import { baseStyle, circle, controlCells, fc, fitScenario, maplibregl, onMissingImage } from "../map/base";
 import { Console } from "./common";
 import { affiliationOf, fillFor, symbolCanvas, symbolKey } from "../lib/symbols";
 import { clsName, simTime } from "../lib/format";
-
-type FC = GeoJSON.FeatureCollection;
-const fc = (features: GeoJSON.Feature[]): FC => ({ type: "FeatureCollection", features });
-
-function circle(lat: number, lon: number, km: number, n = 32): number[][] {
-  const out: number[][] = [];
-  const kx = Math.cos((lat * Math.PI) / 180) || 1e-6;
-  for (let i = 0; i <= n; i++) {
-    const a = (i / n) * Math.PI * 2;
-    out.push([lon + (Math.cos(a) * km) / (111.2 * kx), lat + (Math.sin(a) * km) / 111.2]);
-  }
-  return out;
-}
-
-function cssVar(name: string, fallback: string) {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  return v || fallback;
-}
-
-maplibregl.setWorkerUrl(maplibreWorkerUrl);
-
-let countriesFC: FC | null = null;
-function countries(): FC {
-  if (!countriesFC) {
-    const topo = countries50 as unknown as { objects: { countries: unknown } };
-    countriesFC = feature(topo as never, topo.objects.countries as never) as unknown as FC;
-  }
-  return countriesFC;
-}
-
-/** 10-degree graticule for a sense of the globe. */
-function graticule(): FC {
-  const f: GeoJSON.Feature[] = [];
-  for (let lon = -180; lon <= 180; lon += 10) f.push({ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: Array.from({ length: 33 }, (_, i) => [lon, -80 + i * 5]) } });
-  for (let lat = -80; lat <= 80; lat += 10) f.push({ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: Array.from({ length: 73 }, (_, i) => [-180 + i * 5, lat]) } });
-  return fc(f);
-}
-
-function baseStyle(): StyleSpecification {
-  return {
-    version: 8,
-    projection: { type: "globe" },
-    sources: {
-      countries: { type: "geojson", data: countries() },
-      graticule: { type: "geojson", data: graticule() },
-      cities: { type: "geojson", data: fc([]) },
-      theater: { type: "geojson", data: fc([]) },
-      control: { type: "geojson", data: fc([]) },
-      objectives: { type: "geojson", data: fc([]) },
-      ew: { type: "geojson", data: fc([]) },
-      ellipses: { type: "geojson", data: fc([]) },
-      tracks: { type: "geojson", data: fc([]) },
-      entities: { type: "geojson", data: fc([]) },
-      sats: { type: "geojson", data: fc([]) },
-      sel: { type: "geojson", data: fc([]) },
-      stress: { type: "geojson", data: fc([]) },
-    },
-    sky: {
-      "sky-color": "#0b1d36",
-      "horizon-color": "#5d8fbf",
-      "fog-color": "#a9c7e3",
-      "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 5, 1, 8, 0],
-    },
-    layers: [
-      { id: "bg", type: "background", paint: { "background-color": cssVar("--ocean", "#12355a") } },
-      { id: "graticule", type: "line", source: "graticule", paint: { "line-color": cssVar("--ocean-deep", "#0b2440"), "line-width": 0.6, "line-opacity": 0.8 } },
-      { id: "countries-fill", type: "fill", source: "countries", paint: { "fill-color": cssVar("--land", "#3b4a36") } },
-      { id: "coast-line", type: "line", source: "countries", paint: { "line-color": cssVar("--land-line", "#627556"), "line-width": ["interpolate", ["linear"], ["zoom"], 2, 0.4, 8, 1.4] } },
-      { id: "borders", type: "line", source: "countries", paint: { "line-color": cssVar("--border-line", "#7d8f6e"), "line-width": 0.5, "line-dasharray": [3, 2], "line-opacity": 0.7 } },
-      { id: "theater-fill", type: "fill", source: "theater", paint: { "fill-color": cssVar("--theater-land", "#263a2c") } },
-      { id: "theater-line", type: "line", source: "theater", paint: { "line-color": cssVar("--land-line", "#2f4262"), "line-width": 1 } },
-      { id: "control-fill", type: "fill", source: "control", paint: { "fill-color": ["get", "color"], "fill-opacity": 0.22 } },
-      { id: "objectives-line", type: "line", source: "objectives", paint: { "line-color": ["get", "color"], "line-width": 2, "line-dasharray": [2, 2] } },
-      { id: "ew-fill", type: "fill", source: "ew", paint: { "fill-color": "#cc79a7", "fill-opacity": 0.12 } },
-      { id: "ew-line", type: "line", source: "ew", paint: { "line-color": "#cc79a7", "line-width": 1, "line-dasharray": [1, 2] } },
-      { id: "ellipses-fill", type: "fill", source: "ellipses", paint: { "fill-color": ["get", "color"], "fill-opacity": 0.07 } },
-      { id: "ellipses-line", type: "line", source: "ellipses", paint: { "line-color": ["get", "color"], "line-width": 1, "line-opacity": 0.6, "line-dasharray": [3, 2] } },
-      { id: "cities", type: "circle", source: "cities", paint: { "circle-radius": 3.5, "circle-color": cssVar("--text-2", "#9aa8c0"), "circle-stroke-color": cssVar("--bg", "#0a0f1a"), "circle-stroke-width": 1 } },
-      { id: "sats", type: "circle", source: "sats", paint: { "circle-radius": 2.2, "circle-color": ["get", "color"], "circle-opacity": 0.7 } },
-      { id: "stress", type: "symbol", source: "stress", layout: { "icon-image": ["get", "icon"], "icon-size": 0.4, "icon-allow-overlap": true, "icon-ignore-placement": true } },
-      { id: "tracks", type: "symbol", source: "tracks", layout: { "icon-image": ["get", "icon"], "icon-size": 0.45, "icon-allow-overlap": true, "icon-ignore-placement": true }, paint: { "icon-opacity": ["get", "opacity"] } },
-      { id: "entities", type: "symbol", source: "entities", layout: { "icon-image": ["get", "icon"], "icon-size": 0.5, "icon-allow-overlap": true, "icon-ignore-placement": true, "icon-rotation-alignment": "viewport" }, paint: { "icon-opacity": ["get", "opacity"] } },
-      { id: "sel", type: "circle", source: "sel", paint: { "circle-radius": 16, "circle-color": "transparent", "circle-stroke-color": cssVar("--accent-2", "#e69f00"), "circle-stroke-width": 2.5 } },
-    ],
-  };
-}
 
 const ALT_SAT = 1_000_000;
 
@@ -108,6 +15,7 @@ export function TheaterMap() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const loaded = useRef(false);
   const lastControl = useRef(0);
+  const lastControlKey = useRef("");
   const version = useStore((s) => s.version);
   const view = useStore((s) => s.view);
   const scenario = useStore((s) => s.scenario);
@@ -126,14 +34,10 @@ export function TheaterMap() {
       container: ref.current, style: baseStyle(), center: [center[1], center[0]], zoom: st.scenario?.map.zoom ?? 3.5, attributionControl: false,
       maxPitch: 60, renderWorldCopies: false,
     });
+    if (st.scenario) fitScenario(map, st.scenario, { top: 50, bottom: 30, left: 30, right: 60 });
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: "Basemap: Natural Earth 1:50m (public domain). Factions, forces and place names are fictional." }));
-    map.on("styleimagemissing", (e: MapStyleImageMissingEvent) => {
-      if (map.hasImage(e.id)) return;
-      const { canvas } = symbolCanvas(e.id);
-      const c2d = canvas.getContext("2d")!;
-      map.addImage(e.id, c2d.getImageData(0, 0, canvas.width, canvas.height), { pixelRatio: 1 });
-    });
+    onMissingImage(map, (id) => symbolCanvas(id).canvas);
     const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 12 });
     for (const layer of ["entities", "tracks"]) {
       map.on("mouseenter", layer, (e: MapLayerMouseEvent) => {
@@ -243,13 +147,20 @@ export function TheaterMap() {
     (map.getSource("ellipses") as GeoJSONSource).setData(fc(ells));
     (map.getSource("ew") as GeoJSONSource).setData(fc(layers.ew ? st.ew.map((f) => ({ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [circle(f.lat, f.lon, f.radiusKm)] } })) : []));
     (map.getSource("objectives") as GeoJSONSource).setData(
-      fc(layers.objectives ? (st.politics?.objectives ?? []).map((o) => ({ type: "Feature", properties: { color: o.owner === "BLUE" ? "#56b4e9" : "#e69f00", name: o.name }, geometry: { type: "Polygon", coordinates: [circle(o.center[0], o.center[1], o.radiusKm)] } })) : []),
+      fc(layers.objectives ? (st.politics?.objectives ?? []).map((o) => ({ type: "Feature", properties: { color: o.owner === "BLUE" ? "#56b4e9" : "#e69f00", name: o.name, width: 2 }, geometry: { type: "Polygon", coordinates: [circle(o.center[0], o.center[1], o.radiusKm)] } })) : []),
     );
     const t = performance.now();
     if (layers.control && (force || t - lastControl.current > 2000)) {
       lastControl.current = t;
-      (map.getSource("control") as GeoJSONSource).setData(controlCells(st.entities, st.tracks, v));
-    } else if (!layers.control) (map.getSource("control") as GeoJSONSource).setData(fc([]));
+      const cells = controlCells(st.entities, st.tracks, v);
+      if (cells.key !== lastControlKey.current) {
+        lastControlKey.current = cells.key;
+        (map.getSource("control") as GeoJSONSource).setData(cells.data);
+      }
+    } else if (!layers.control) {
+      lastControlKey.current = "";
+      (map.getSource("control") as GeoJSONSource).setData(fc([]));
+    }
   }
 
   useEffect(() => {
@@ -262,23 +173,33 @@ export function TheaterMap() {
     const map = mapRef.current;
     if (map && loaded.current) {
       drawStatic(map);
-      if (scenario) map.jumpTo({ center: [scenario.map.center[1], scenario.map.center[0]], zoom: scenario.map.zoom });
+      if (scenario) fitScenario(map, scenario, { top: 50, bottom: 30, left: 30, right: 60 });
       drawDynamic(map, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scenario, view]);
 
-  // Linked selection: fly to and ring the selected unit or track.
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !loaded.current) return;
+  // Linked selection: ring the selected unit or track, and bring it into view once when it is selected
+  // (not on every delta, which would fight the user's own panning).
+  const selPos = () => {
     const st = useStore.getState();
     const e = selected ? st.entities.get(selected) : undefined;
     const t = selected && !e ? st.tracks.find((x) => x.id === selected) : undefined;
-    const p = e ? [e.lon, e.lat] : t ? [t.lon, t.lat] : null;
+    return e ? [e.lon, e.lat] as [number, number] : t ? [t.lon, t.lat] as [number, number] : null;
+  };
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded.current) return;
+    const p = selPos();
     (map.getSource("sel") as GeoJSONSource).setData(fc(p ? [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: p } }] : []));
-    if (p) map.easeTo({ center: p as [number, number], duration: 600 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, version]);
+  useEffect(() => {
+    const map = mapRef.current;
+    const p = selPos();
+    if (map && loaded.current && p && !map.getBounds().contains(p)) map.easeTo({ center: p, duration: 600 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -326,27 +247,4 @@ export function TheaterMap() {
       <div className="fps" aria-label="frames per second">{fps} fps{stress ? " · 5,000 test symbols" : ""}</div>
     </Console>
   );
-}
-
-/** H3 control shading: the faction with more presence in each resolution-4 cell colors it. */
-function controlCells(entities: Map<string, EntityView>, tracks: TrackView[], view: string): FC {
-  const cells = new Map<string, { b: number; r: number }>();
-  const add = (lat: number, lon: number, f: string, w: number) => {
-    const c = latLngToCell(lat, lon, 4);
-    const x = cells.get(c) ?? { b: 0, r: 0 };
-    if (f === "BLUE") x.b += w;
-    else if (f === "RED") x.r += w;
-    cells.set(c, x);
-  };
-  for (const e of entities.values()) {
-    if (e.destroyed || (e.domain !== "LAND" && e.domain !== "SEA")) continue;
-    add(e.lat, e.lon, e.faction, e.health);
-  }
-  if (view !== "WHITE") for (const t of tracks) if (t.affiliation === "HOSTILE" && (t.believedDomain === "LAND" || t.believedDomain === "SEA")) add(t.lat, t.lon, view === "BLUE" ? "RED" : "BLUE", 0.8);
-  const feats: GeoJSON.Feature[] = [];
-  for (const [c, x] of cells) {
-    const color = x.b > x.r * 1.2 ? "#0072B2" : x.r > x.b * 1.2 ? "#D55E00" : "#999999";
-    feats.push({ type: "Feature", properties: { color }, geometry: { type: "Polygon", coordinates: [cellToBoundary(c, true)] } });
-  }
-  return fc(feats);
 }

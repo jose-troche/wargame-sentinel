@@ -47,29 +47,6 @@ export function AgentConsole() {
   const llm = decisions.filter((d) => d.faction === f && d.source === "LLM").length;
   const rules = decisions.filter((d) => d.faction === f && d.source === "RULES").length;
 
-  const Node = ({ role }: { role: Role }) => {
-    const id = agentId(f, role);
-    const a: AgentStatus | undefined = byId.get(id);
-    const held = a && a.seat !== "AI";
-    const mine = a?.seat === me;
-    return (
-      <div className="card" style={{ padding: 8, minWidth: 130, borderColor: focus === id ? "var(--accent)" : undefined, cursor: "pointer" }} onClick={() => setFocus(focus === id ? null : id)}>
-        <div style={{ fontWeight: 600, fontSize: 12 }}>{ROLE_INFO[role].title}</div>
-        <div className="row" style={{ gap: 4, marginTop: 4 }}>
-          <span className={`pill ${held ? "human" : ""}`}>{held ? (mine ? "you" : "human") : "AI"}</span>
-          <SourcePill s={a?.lastSource} />
-        </div>
-        <div className="dim" style={{ fontSize: 10, marginTop: 2 }}>{a?.lastDecisionMs !== undefined ? `last ${simTime(a.lastDecisionMs)}` : "no decision yet"}</div>
-        {(view === f || meta?.owner === me) && (
-          <div className="row" style={{ marginTop: 4, gap: 4 }} onClick={(e) => e.stopPropagation()}>
-            {!held && <button className="small" onClick={() => controller.seat(id, true)}>Take seat</button>}
-            {mine && <><button className="small primary" onClick={() => setOrderSeat(id)}>Order…</button><button className="small" onClick={() => controller.seat(id, false)}>Hand back</button></>}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <Console title="Agent Reasoning Console" concept="Explainable multi-agent decision-making"
       tools={
@@ -89,9 +66,9 @@ export function AgentConsole() {
         </>
       }>
       <div className="col" style={{ gap: 6, alignItems: "center" }}>
-        {COMMAND.map((row, i) => <div key={i} className="row wrap" style={{ justifyContent: "center" }}>{row.map((r) => <Node key={r} role={r} />)}</div>)}
+        {COMMAND.map((row, i) => <div key={i} className="row wrap" style={{ justifyContent: "center" }}>{row.map((r) => <AgentNode key={r} role={r} faction={f} agent={byId.get(agentId(f, r))} focus={focus} setFocus={setFocus} canSeat={view === f || meta?.owner === me} me={me} onOrder={setOrderSeat} />)}</div>)}
         <div className="section-title">Staff</div>
-        <div className="row wrap" style={{ justifyContent: "center" }}>{STAFF.map((r) => <Node key={r} role={r} />)}</div>
+        <div className="row wrap" style={{ justifyContent: "center" }}>{STAFF.map((r) => <AgentNode key={r} role={r} faction={f} agent={byId.get(agentId(f, r))} focus={focus} setFocus={setFocus} canSeat={view === f || meta?.owner === me} me={me} onOrder={setOrderSeat} />)}</div>
       </div>
 
       <div className="row wrap" style={{ alignItems: "flex-start", gap: 12, marginTop: 10 }}>
@@ -148,6 +125,31 @@ export function AgentConsole() {
         </div>
       )}
     </Console>
+  );
+}
+
+/** One seat in the command hierarchy. Module-level so React keeps it mounted across 5 Hz updates. */
+function AgentNode({ role, faction, agent: a, focus, setFocus, canSeat, me, onOrder }: {
+  role: Role; faction: "BLUE" | "RED"; agent?: AgentStatus; focus: string | null; setFocus: (id: string | null) => void; canSeat: boolean; me: string; onOrder: (seat: string) => void;
+}) {
+  const id = agentId(faction, role);
+  const held = a && a.seat !== "AI";
+  const mine = a?.seat === me;
+  return (
+    <div className="card" style={{ padding: 8, minWidth: 130, borderColor: focus === id ? "var(--accent)" : undefined, cursor: "pointer" }} onClick={() => setFocus(focus === id ? null : id)}>
+      <div style={{ fontWeight: 600, fontSize: 12 }}>{ROLE_INFO[role].title}</div>
+      <div className="row" style={{ gap: 4, marginTop: 4 }}>
+        <span className={`pill ${held ? "human" : ""}`}>{held ? (mine ? "you" : "human") : "AI"}</span>
+        <SourcePill s={a?.lastSource} />
+      </div>
+      <div className="dim" style={{ fontSize: 10, marginTop: 2 }}>{a?.lastDecisionMs !== undefined ? `last ${simTime(a.lastDecisionMs)}` : "no decision yet"}</div>
+      {canSeat && (
+        <div className="row" style={{ marginTop: 4, gap: 4 }} onClick={(e) => e.stopPropagation()}>
+          {!held && <button className="small" onClick={() => controller.seat(id, true)}>Take seat</button>}
+          {mine && <><button className="small primary" onClick={() => onOrder(id)}>Order…</button><button className="small" onClick={() => controller.seat(id, false)}>Hand back</button></>}
+        </div>
+      )}
+    </div>
   );
 }
 
