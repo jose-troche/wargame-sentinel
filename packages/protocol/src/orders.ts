@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { ROE_LEVELS, TASKS, ROLES } from "./core";
+import { POSTURES, ROE_LEVELS, TASKS, ROLES } from "./core";
 
 /** One order as produced by an agent (LLM or rules) or a human seat. */
 export const OrderSchema = z.object({
-  type: z.enum(["OPORD", "FRAGO", "ATO", "STO", "ROE", "ESCALATE", "DEESCALATE", "PRIORITY"]),
+  type: z.enum(["OPORD", "FRAGO", "ATO", "STO", "ROE", "ESCALATE", "DEESCALATE", "PRIORITY", "INTENT"]),
   /** A unit id, a unit group (e.g. "blue.air.*") or a role agent id. */
   to: z.string().min(1).max(64),
   task: z.enum(TASKS).optional(),
@@ -14,6 +14,9 @@ export const OrderSchema = z.object({
   window_sim_h: z.tuple([z.number(), z.number()]).optional(),
   roe: z.enum(ROE_LEVELS).optional(),
   note: z.string().max(200).optional(),
+  /** INTENT only: the commander's posture and main-effort objective id. */
+  posture: z.enum(POSTURES).optional(),
+  objective: z.string().max(16).optional(),
 });
 export type Order = z.infer<typeof OrderSchema>;
 
@@ -50,13 +53,15 @@ export const ORDER_BATCH_JSON_SCHEMA = {
       items: {
         type: "object",
         properties: {
-          type: { type: "string", enum: ["OPORD", "FRAGO", "ATO", "STO", "ROE", "ESCALATE", "DEESCALATE", "PRIORITY"] },
+          type: { type: "string", enum: ["OPORD", "FRAGO", "ATO", "STO", "ROE", "ESCALATE", "DEESCALATE", "PRIORITY", "INTENT"] },
           to: { type: "string" },
           task: { type: "string", enum: [...TASKS] },
           area_h3: { type: "string" },
           target: { type: "string" },
           window_sim_h: { type: "array", items: { type: "number" }, minItems: 2, maxItems: 2 },
           roe: { type: "string", enum: [...ROE_LEVELS] },
+          posture: { type: "string", enum: [...POSTURES] },
+          objective: { type: "string" },
         },
         required: ["type", "to"],
       },

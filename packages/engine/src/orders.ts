@@ -8,6 +8,9 @@ import { resolvePoint } from "./tactical";
 import { setEscalation } from "./politics";
 import type { Entity, PendingOrder, TaskState } from "./types";
 
+/** How long a human commander's direct order shields a unit from AI re-tasking. */
+export const HUMAN_HOLD_MS = 12 * HOUR_MS;
+
 function resolveUnits(ctx: Ctx, faction: Faction, to: string): Entity[] {
   if (to.startsWith("cls:")) {
     const cls = to.slice(4);
@@ -46,6 +49,27 @@ export function applyOrderBatch(ctx: Ctx, p: PendingOrder): { applied: number; r
         fs.priority = o.note ?? o.task ?? o.to;
         applied++;
         continue;
+      case "INTENT": {
+        if (role !== "nca" && role !== "jfc" && role !== "human") {
+          rejected.push(`${o.type}: only the commander (NCA/JFC) may set intent`);
+          continue;
+        }
+        const obj = o.objective ? ctx.s.objectives.find((x) => x.id === o.objective && x.owner === p.faction) : undefined;
+        if (o.objective && !obj) {
+          rejected.push(`${o.type}: ${o.objective} is not a ${p.faction} objective`);
+          continue;
+        }
+        const posture = o.posture ?? fs.posture ?? "BALANCED";
+        const mainEffort = obj?.id ?? fs.mainEffort;
+        if (posture !== fs.posture || mainEffort !== fs.mainEffort) {
+          fs.posture = posture;
+          fs.mainEffort = mainEffort;
+          const name = ctx.s.objectives.find((x) => x.id === mainEffort && x.owner === p.faction)?.name;
+          ctx.emit({ type: "INTENT", vis: ctx.vis(p.faction), text: `${fs.name} commander's intent: ${posture.toLowerCase()} posture${name ? `, main effort "${name}"` : ""}`, factors: { posture, mainEffort: mainEffort ?? "" } });
+        }
+        applied++;
+        continue;
+      }
     }
     if (parseAgentId(o.to)) {
       applied++; // coordination with a subordinate commander: recorded in the trace only
@@ -61,10 +85,19 @@ export function applyOrderBatch(ctx: Ctx, p: PendingOrder): { applied: number; r
         rejected.push(`${u.id}: outside ${role} authority`);
         continue;
       }
+      // A human commander's direct order holds: AI roles may not re-task the unit until it expires.
+      if (p.source !== "HUMAN" && u.heldUntilMs !== undefined && u.heldUntilMs > ctx.s.simMs) {
+        rejected.push(`${u.id}: following the commander's direct order`);
+        continue;
+      }
       const task: TaskState = { kind: o.task ?? "HOLD", issuedMs: ctx.s.simMs, target: o.target };
       const pt = resolvePoint({ kind: task.kind, issuedMs: 0, point: o.point }, o.area_h3);
       if (pt) task.point = pt;
       if (o.window_sim_h) task.window = [Math.round(o.window_sim_h[0] * HOUR_MS), Math.round(o.window_sim_h[1] * HOUR_MS)];
+      if (p.source === "HUMAN") {
+        u.heldUntilMs = Math.max(ctx.s.simMs + HUMAN_HOLD_MS, task.window?.[1] ?? 0);
+        ctx.touch(u);
+      }
       sendOrder(ctx, p.faction, p.from, u, o.type, task, { rationale: p.batch.rationale, correlation: corr, roe: o.roe, priority: o.type === "FRAGO" ? "IMMEDIATE" : "PRIORITY" });
       applied++;
     }

@@ -17,7 +17,7 @@ const zeroDomains = (): Record<Domain, number> => ({ LAND: 0, SEA: 0, AIR: 0, DR
 
 function factionState(id: Faction, name: string, will: number, escalation: number): FactionState {
   return {
-    id, name, will, escalation, roe: "WEAPONS_TIGHT",
+    id, name, will, escalation, roe: "WEAPONS_TIGHT", posture: "BALANCED",
     losses: zeroDomains(), kills: zeroDomains(), lossPoints: 0, killPoints: 0, civilianHarm: 0, seekingTerms: false,
     tracks: [], nextTrackId: 1, flows: [], shortfallHours: 0, c2Links: [], unreachable: [], meanLatencyMs: 0,
     hourLossPoints: 0, hourKillPoints: 0, hourHarm: 0, triggers: [],

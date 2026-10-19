@@ -1,5 +1,6 @@
 // View building: ground truth for WHITE, own forces + own COP for each faction. This is the
 // fog-of-war boundary: faction views never include truth ids, enemy entities or enemy messages.
+import { scrubEvent } from "@sentinel/protocol";
 import type {
   AirView, CopForAgents, EntityView, EventView, Faction, KillChainView, LogisticsView, MessageEnvelope, PoliticsView, SatelliteView, TrackView, UnitSummary, View, ViewDelta,
 } from "@sentinel/protocol";
@@ -25,6 +26,7 @@ export function entityView(e: Entity, white: boolean): EntityView {
   if (e.task.target) v.taskTarget = e.task.target;
   if (e.members > 1) v.count = e.members;
   if (white && e.decoy) v.decoy = true;
+  if (e.heldUntilMs !== undefined && e.heldUntilMs > 0) v.heldUntilMs = e.heldUntilMs;
   return v;
 }
 
@@ -61,6 +63,7 @@ export function politicsView(ctx: Ctx, view: View): PoliticsView {
       return {
         faction: f, name: fs.name, will: own ? fs.will : Math.round(fs.will / 10) * 10, escalation: fs.escalation, losses: fs.losses, lossPoints: fs.lossPoints,
         kills: fs.kills, civilianHarm: fs.civilianHarm, seekingTerms: fs.seekingTerms,
+        ...(own ? { posture: fs.posture, mainEffort: fs.mainEffort } : {}),
       };
     }),
     objectives: ctx.s.objectives.map((o) => ({ ...o })),
@@ -137,7 +140,7 @@ export function buildDelta(ctx: Ctx, view: View, events: EventView[], opt: Drain
   if (opt.full || opt.satellites) d.satellites = satellites(ctx);
   d.debris = ctx.s.debris.map((x) => ({ ...x }));
   d.ew = ctx.s.ew.filter((x) => white || x.faction === view || x.kind !== "GNSS").map((x) => ({ id: x.id, faction: x.faction, lat: q(x.lat), lon: q(x.lon), radiusKm: x.radiusKm, strength: x.strength, kind: x.kind === "SATCOM" ? "JAM" : x.kind }));
-  const evs = events.filter((e) => e.vis.includes(view));
+  const evs = events.filter((e) => e.vis.includes(view)).map((e) => scrubEvent(e, view));
   if (evs.length) d.events = evs;
   const msgs = messagesFor(ctx, view, opt.full ? null : new Set(ctx.newMessages));
   if (msgs.length) d.messages = msgs;
@@ -150,7 +153,7 @@ export function buildCop(ctx: Ctx, f: "BLUE" | "RED", consumeTriggers = true): C
   const enemy = f === "BLUE" ? "RED" : "BLUE";
   const units: UnitSummary[] = ctx.s.entities
     .filter((e) => e.faction === f && !e.destroyed)
-    .map((e) => ({ id: e.id, cls: e.cls, domain: e.domain, callsign: e.callsign, h3: e.h3, lat: q(e.lat, 100), lon: q(e.lon, 100), health: q(e.domain === "LAND" ? e.strength : e.health, 100), supplyDays: q(e.supplyDays, 10), fuel: q(e.fuel, 100), task: e.task.kind, taskPoint: e.task.point ? [q(e.task.point[0], 100), q(e.task.point[1], 100)] as [number, number] : undefined, taskTarget: e.task.target, comms: e.comms }));
+    .map((e) => ({ id: e.id, cls: e.cls, domain: e.domain, callsign: e.callsign, h3: e.h3, lat: q(e.lat, 100), lon: q(e.lon, 100), health: q(e.domain === "LAND" ? e.strength : e.health, 100), supplyDays: q(e.supplyDays, 10), fuel: q(e.fuel, 100), task: e.task.kind, taskPoint: e.task.point ? [q(e.task.point[0], 100), q(e.task.point[1], 100)] as [number, number] : undefined, taskTarget: e.task.target, comms: e.comms, ...(e.heldUntilMs !== undefined && e.heldUntilMs > ctx.s.simMs ? { held: true } : {}) }));
   const triggers = fs.triggers.slice(-10);
   if (consumeTriggers) fs.triggers = [];
   return {
@@ -160,6 +163,7 @@ export function buildCop(ctx: Ctx, f: "BLUE" | "RED", consumeTriggers = true): C
     shortfallUnits: units.filter((u) => u.supplyDays <= 0.5).length,
     unreachable: fs.unreachable, meanLatencyMs: fs.meanLatencyMs, losses: fs.lossPoints, kills: fs.killPoints, triggers,
     enemySpace: ctx.s.entities.filter((e) => e.orbit && !e.destroyed && e.faction === enemy).map((e) => ({ id: e.id, cls: e.cls })),
+    posture: fs.posture ?? "BALANCED", ...(fs.mainEffort ? { mainEffort: fs.mainEffort } : {}),
     hq: (() => { const h = ctx.s.entities.find((e) => e.faction === f && e.cls === "hq" && !e.destroyed); return h ? [q(h.lat, 100), q(h.lon, 100)] as [number, number] : undefined; })(),
   };
 }

@@ -55,6 +55,10 @@ export const ROE_LEVELS = ["WEAPONS_HOLD", "WEAPONS_TIGHT", "WEAPONS_FREE"] as c
 export type Roe = (typeof ROE_LEVELS)[number];
 
 export const AUTONOMY = ["STRICT", "MISSION", "FULL"] as const;
+
+/** Commander's posture: how much risk the staff accept to take objectives. */
+export const POSTURES = ["AGGRESSIVE", "BALANCED", "DEFENSIVE"] as const;
+export type Posture = (typeof POSTURES)[number];
 export type Autonomy = (typeof AUTONOMY)[number];
 
 export const ESCALATION_LADDER = [

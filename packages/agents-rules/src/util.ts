@@ -1,4 +1,4 @@
-import type { CopForAgents, ObjectiveView, Order, TrackView, UnitSummary } from "@sentinel/protocol";
+import type { CopForAgents, ObjectiveView, Order, Posture, TrackView, UnitSummary } from "@sentinel/protocol";
 
 export function km(a: [number, number] | { lat: number; lon: number }, b: [number, number] | { lat: number; lon: number }): number {
   const [la1, lo1] = Array.isArray(a) ? a : [a.lat, a.lon];
@@ -22,11 +22,21 @@ export function ownObjectives(cop: CopForAgents): ObjectiveView[] {
   return cop.objectives.filter((o) => o.owner === cop.faction);
 }
 
-/** Objective the faction should focus on: the heaviest one it does not yet hold. */
+/** Objective the faction should focus on: the commander's main effort, else the heaviest one it does not yet hold. */
 export function focusObjective(cop: CopForAgents, domain?: "LAND" | "SEA"): ObjectiveView | undefined {
   const objs = ownObjectives(cop).filter((o) => !domain || o.domain === domain || o.domain === "ANY");
+  const main = cop.mainEffort ? objs.find((o) => o.id === cop.mainEffort) : undefined;
+  if (main) return main;
   return objs.sort((a, b) => Number(a.holder === cop.faction) - Number(b.holder === cop.faction) || b.weight - a.weight)[0];
 }
+
+/** How much risk the staff accept under each commander's posture (BALANCED is the historical default). */
+export const POSTURE_RULES: Record<Posture, { attackRatio: number; carrierStandoffKm: number; strikeClassified: boolean; strikeNearOwnOnly: boolean; escalateBias: number }> = {
+  AGGRESSIVE: { attackRatio: 1.1, carrierStandoffKm: 140, strikeClassified: true, strikeNearOwnOnly: false, escalateBias: 0.15 },
+  BALANCED: { attackRatio: 1.5, carrierStandoffKm: 220, strikeClassified: true, strikeNearOwnOnly: false, escalateBias: 0 },
+  DEFENSIVE: { attackRatio: Infinity, carrierStandoffKm: 320, strikeClassified: false, strikeNearOwnOnly: true, escalateBias: -0.25 },
+};
+export const postureOf = (cop: CopForAgents) => POSTURE_RULES[cop.posture ?? "BALANCED"];
 
 export function nearestTrack(tracks: TrackView[], p: [number, number], filter: (t: TrackView) => boolean): TrackView | undefined {
   let best: TrackView | undefined;

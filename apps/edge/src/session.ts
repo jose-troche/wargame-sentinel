@@ -4,7 +4,7 @@
 import { DurableObject } from "cloudflare:workers";
 import { getAgentByName } from "agents";
 import {
-  agentId, decode, encode, fmtSimTime, OrderBatchSchema, parseAgentId, ROLES, type AgentStatus, type ControlFrame, type CopForAgents,
+  agentId, decode, encode, fmtSimTime, OrderBatchSchema, parseAgentId, ROLES, scrubEvent, type AgentStatus, type ControlFrame, type CopForAgents,
   type Decision, type DeltaFrame, type EventView, type Faction, type JoinClaims, type OrderBatch, type OrderFrame, type ResumeOrder, type Role,
   type SessionMeta, type View, type ViewDelta, type AarFrame,
 } from "@sentinel/protocol";
@@ -384,7 +384,7 @@ export class SessionDO extends DurableObject<Env> {
     const rows = this.sql<{ batch: ArrayBuffer }>("SELECT batch FROM events WHERE seq_to >= ? ORDER BY seq LIMIT 200", fromSeq);
     for (const r of rows) {
       for (const e of decode<EventView[]>(new Uint8Array(r.batch))) {
-        if (e.seq >= fromSeq && e.vis.includes(view)) out.push(e);
+        if (e.seq >= fromSeq && e.vis.includes(view)) out.push(scrubEvent(e, view));
         if (out.length >= limit) return out;
       }
     }

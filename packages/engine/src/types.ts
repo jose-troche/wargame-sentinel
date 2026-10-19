@@ -1,6 +1,6 @@
 // Ground-truth state. Lives only inside the World Engine; views and COPs are derived from it.
 import type {
-  Autonomy, C2LinkView, Domain, EventView, Faction, KillChainStage, MessageEnvelope, OrbitElements, OrderBatch, Roe, Task, TrackQuality,
+  Autonomy, C2LinkView, Domain, EventView, Faction, KillChainStage, MessageEnvelope, OrbitElements, OrderBatch, Posture, Roe, Task, TrackQuality,
 } from "@sentinel/protocol";
 import type { RngState } from "./rng";
 import type { WeatherFront } from "./world";
@@ -61,6 +61,8 @@ export interface Entity {
   lastFireMs?: number;
   landmass?: string | null;
   kills: number;
+  /** Sim ms until which a human commander's direct order holds; AI roles may not re-task the unit before then. */
+  heldUntilMs?: number;
   /** Set when a formation became combat-ineffective; cleared once it reconstitutes. */
   ineffectiveMs?: number;
 }
@@ -192,6 +194,9 @@ export interface FactionState {
   tracks: Track[];
   nextTrackId: number;
   priority?: string;
+  /** Commander's intent, set by INTENT orders. */
+  posture: Posture;
+  mainEffort?: string;
   flows: SupplyFlow[];
   shortfallHours: number;
   c2Links: C2LinkView[];

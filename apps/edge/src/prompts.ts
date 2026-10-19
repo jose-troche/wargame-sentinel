@@ -11,7 +11,7 @@ export const GUARDRAIL =
   "Output only one JSON object that matches the schema. No prose outside JSON.";
 
 const ROLE_CARD: Record<Role, string> = {
-  nca: "Set end states, approve escalation steps (ESCALATE/DEESCALATE one rung at a time) and set ROE (WEAPONS_HOLD/TIGHT/FREE). You cannot move units.",
+  nca: "Set end states, approve escalation steps (ESCALATE/DEESCALATE one rung at a time), set ROE (WEAPONS_HOLD/TIGHT/FREE) and the commander's INTENT (posture AGGRESSIVE/BALANCED/DEFENSIVE and a main-effort objective id). You cannot move units.",
   jfc: "Turn objectives into a phased campaign: set a PRIORITY (supported component) and task ISR assets (hale_isr, aewc) with ISR over key areas.",
   lcc: "Command land formations: MOVE, ATTACK (target a hostile LAND track id), DEFEND a point, WITHDRAW; convoys RESUPPLY a unit id.",
   mcc: "Command ships, submarines, USVs and UUVs: PATROL areas, STRIKE hostile SEA tracks, MOVE oilers near the fleet, MOVE the amphibious group to land objectives.",
@@ -36,6 +36,7 @@ export function buildPrompt(role: Role, cop: CopForAgents, factionName: string, 
   const units = cop.units
     .filter((u) => roleCanCommand(role === "j2" || role === "j4" || role === "j5" || role === "j6" ? "jfc" : role, u))
     .slice(0, 30)
+    .filter((u) => !u.held) // following the human commander's direct order
     .map((u) => `${u.id.padEnd(14)}|${u.cls.padEnd(18)}|${u.lat.toFixed(2)},${u.lon.toFixed(2)}|hp ${u.health.toFixed(2)}|sup ${u.supplyDays.toFixed(1)}d|${u.task}`);
   const objectives = cop.objectives.filter((o) => o.owner === cop.faction).map((o) => `${o.id} ${o.name} (${o.kind}, ${o.domain}) at ${o.center[0]},${o.center[1]} r${o.radiusKm}km holder=${o.holder}`);
   const hour = Math.round(cop.simMs / 3_600_000);
@@ -43,12 +44,13 @@ export function buildPrompt(role: Role, cop: CopForAgents, factionName: string, 
     `ROLE: ${info.title} of ${factionName} (${cop.faction}). ${ROLE_CARD[role]}`,
     `TIME: H+${hour}. ESCALATION rung ${cop.escalation} (${rung.name}): ${rung.allows} Enemy rung ${cop.enemyEscalation}. National will ${cop.will.toFixed(0)}.`,
     `OBJECTIVES:\n${objectives.join("\n") || "none"}`,
+    `COMMANDER'S INTENT: ${cop.posture.toLowerCase()} posture${cop.mainEffort ? `, main effort ${cop.mainEffort}` : ""}. Plan within it.`,
     `HOSTILE/UNKNOWN TRACKS (id|class|domain|quality|lat,lon|age):\n${tracks.join("\n") || "none"}`,
     `UNITS YOU COMMAND (id|class|lat,lon|health|supply|task):\n${units.join("\n") || "none"}`,
     `SUSTAINMENT: ${cop.shortfallUnits} units out of supply. NETWORK: mean order latency ${Math.round(cop.meanLatencyMs / 60000)} min, ${cop.unreachable.length} unreachable.`,
     `RECENT TRIGGERS: ${cop.triggers.join("; ") || "none"}`,
     `CURRENT PLAN MEMORY: ${memory || "none yet"}`,
-    `OUTPUT: one compact JSON object, no markdown, no extra whitespace. Omit fields you do not need.\n{"orders":[{"type":"OPORD|FRAGO|ATO|STO|ROE|ESCALATE|DEESCALATE|PRIORITY","to":"<unit id>","task":"${TASKS.join("|")}","point":[lat,lon],"target":"<track or unit id>","window_sim_h":[start,end],"roe":"WEAPONS_HOLD|WEAPONS_TIGHT|WEAPONS_FREE"}],"rationale":"<=40 words citing ids","confidence":0.0-1.0}`,
+    `OUTPUT: one compact JSON object, no markdown, no extra whitespace. Omit fields you do not need.\n{"orders":[{"type":"OPORD|FRAGO|ATO|STO|ROE|ESCALATE|DEESCALATE|PRIORITY|INTENT","to":"<unit id>","task":"${TASKS.join("|")}","point":[lat,lon],"target":"<track or unit id>","window_sim_h":[start,end],"roe":"WEAPONS_HOLD|WEAPONS_TIGHT|WEAPONS_FREE","posture":"AGGRESSIVE|BALANCED|DEFENSIVE","objective":"<objective id>"}],"rationale":"<=40 words citing ids","confidence":0.0-1.0}`,
     `Issue at most 6 orders. Use only unit ids from your list. Respect the escalation rung.`,
   ].join("\n\n");
   return [

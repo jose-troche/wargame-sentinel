@@ -3,6 +3,7 @@ import { rulePolicy } from "./policies";
 
 export { rulePolicy, POLICIES, type PolicyResult } from "./policies";
 export * from "./util";
+export * from "./plays";
 
 /** Roles due for a decision this simulated hour: by cadence, or early on event triggers (debounced). */
 export function rolesDue(cop: CopForAgents, last: Partial<Record<Role, number>>, humanSeats: Set<string> = new Set()): Role[] {

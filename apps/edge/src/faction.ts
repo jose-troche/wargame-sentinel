@@ -182,7 +182,7 @@ export class FactionAgent extends Agent<Env, FactionAgentState> {
     for (const o of parsed.batch.orders) {
       const unit = own.get(o.to);
       const toAgent = /^(blue|red)\.[a-z0-9]+$/.test(o.to);
-      if (["ROE", "ESCALATE", "DEESCALATE", "PRIORITY"].includes(o.type) || toAgent || (unit && roleCanCommand(role, unit))) kept.push(o);
+      if (["ROE", "ESCALATE", "DEESCALATE", "PRIORITY", "INTENT"].includes(o.type) || toAgent || (unit && roleCanCommand(role, unit))) kept.push(o);
       else dropped++;
     }
     this.sql`INSERT INTO prompt_log (id, role, sim_ms, model, prompt, response, neurons, source, created_at) VALUES (${logId}, ${role}, ${cop.simMs}, ${model}, ${promptText}, ${responseText}, ${spent}, ${"LLM"}, ${Date.now()})`;

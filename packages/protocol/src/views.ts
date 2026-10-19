@@ -1,5 +1,5 @@
 // View types: what a console or an agent is allowed to see. Faction views never contain ground truth.
-import type { Domain, Faction, KillChainStage, Role, Task, TrackQuality, View } from "./core";
+import type { Domain, Faction, KillChainStage, Posture, Role, Task, TrackQuality, View } from "./core";
 import type { Decision } from "./orders";
 
 export interface EntityView {
@@ -31,6 +31,8 @@ export interface EntityView {
   count?: number;
   /** Only in WHITE views: true for decoys. */
   decoy?: boolean;
+  /** Sim ms until which the unit follows a direct order from a human commander (AI staff leave it alone). */
+  heldUntilMs?: number;
 }
 
 export interface TrackView {
@@ -128,6 +130,9 @@ export interface FactionPolitics {
   kills: Record<Domain, number>;
   civilianHarm: number;
   seekingTerms: boolean;
+  /** Commander's intent: present only in the faction's own view (and WHITE). */
+  posture?: Posture;
+  mainEffort?: string;
 }
 export interface PoliticsView {
   factions: FactionPolitics[];
@@ -263,6 +268,8 @@ export interface UnitSummary {
   taskPoint?: [number, number];
   taskTarget?: string;
   comms: EntityView["comms"];
+  /** Following a human commander's direct order: AI roles must not re-task it. */
+  held?: boolean;
 }
 export interface CopForAgents {
   faction: Faction;
@@ -284,6 +291,9 @@ export interface CopForAgents {
   enemySpace: { id: string; cls: string }[];
   /** Own HQ position, for rule policies that keep forces near home. */
   hq?: [number, number];
+  /** Commander's intent (INTENT order): posture and main-effort objective id. */
+  posture: Posture;
+  mainEffort?: string;
 }
 
 export interface AgentStatus {
@@ -294,4 +304,18 @@ export interface AgentStatus {
   lastDecisionMs?: number;
   lastSource?: Decision["source"];
   budgetLeft?: number;
+}
+
+/**
+ * Event as a faction may see it: entity references are limited to that faction's own units and
+ * tracks (ids are prefixed "B-"/"TB-" for Blue, "R-"/"TR-" for Red), so no truth id crosses the boundary.
+ */
+export function scrubEvent(e: EventView, view: View): EventView {
+  if (view === "WHITE" || !e.entities) return e;
+  const own = e.entities.filter((id) => id.startsWith(`${view[0]}-`) || id.startsWith(`T${view[0]}-`));
+  if (own.length === e.entities.length) return e;
+  const out: EventView = { ...e };
+  if (own.length) out.entities = own;
+  else delete out.entities;
+  return out;
 }

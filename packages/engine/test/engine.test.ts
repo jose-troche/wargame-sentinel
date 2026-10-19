@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { RulesCommander } from "@sentinel/agents-rules";
+import type { OrderBatch } from "@sentinel/protocol";
 import { getScenario } from "@sentinel/scenarios";
 import { Engine, hashEvents, computeAar, aarLinksValid, dmath } from "../src";
 import { runHeadless } from "./helpers";
@@ -62,6 +64,55 @@ describe("fog of war (FR-03)", () => {
     expect(json).not.toMatch(/"R-[A-Z]+-\d+"/);
     const white = eng.viewSnapshot("WHITE");
     expect(white.entities!.some((e) => e.faction === "RED")).toBe(true);
+  });
+
+  it("events in a faction view name only that faction's units and tracks", () => {
+    const scn = getScenario("strait-crisis")!;
+    const eng = Engine.create(scn, 3);
+    const cmd = new RulesCommander();
+    const blue: string[] = [];
+    for (let i = 0; i < 18 * 60; i++) {
+      const r = eng.step();
+      if (r.cops) for (const f of ["BLUE", "RED"] as const) for (const d of cmd.decide(r.cops[f])) if (d.orders.length) eng.submit({ faction: f, from: d.agent, batch: d, source: "RULES" });
+      for (const e of eng.drain().views.BLUE.events ?? []) blue.push(...(e.entities ?? []));
+    }
+    expect(blue.length).toBeGreaterThan(0);
+    expect(blue.filter((id) => !id.startsWith("B-") && !id.startsWith("TB-"))).toEqual([]);
+  });
+});
+
+describe("commander's intent", () => {
+  const scn = getScenario("strait-crisis")!;
+  const submit = (eng: Engine, from: string, source: string, orders: OrderBatch["orders"]) => eng.submit({ faction: "BLUE", from, source, batch: { orders, rationale: "test", confidence: 0.7 } });
+
+  it("an INTENT order sets posture and main effort in the faction's own picture only", () => {
+    const eng = Engine.create(scn, 4);
+    submit(eng, "blue.nca", "HUMAN", [{ type: "INTENT", to: "blue.jfc", posture: "AGGRESSIVE", objective: "B2" }]);
+    eng.step();
+    expect(eng.cop("BLUE")).toMatchObject({ posture: "AGGRESSIVE", mainEffort: "B2" });
+    expect(eng.viewSnapshot("BLUE").politics!.factions.find((f) => f.faction === "BLUE")).toMatchObject({ posture: "AGGRESSIVE", mainEffort: "B2" });
+    expect(eng.viewSnapshot("RED").politics!.factions.find((f) => f.faction === "BLUE")!.posture).toBeUndefined();
+  });
+
+  it("only the commander may set intent, and only toward its own objectives", () => {
+    const eng = Engine.create(scn, 4);
+    submit(eng, "blue.acc", "RULES", [{ type: "INTENT", to: "blue.jfc", posture: "DEFENSIVE" }]);
+    submit(eng, "blue.nca", "HUMAN", [{ type: "INTENT", to: "blue.jfc", objective: "R1" }]);
+    eng.step();
+    expect(eng.cop("BLUE").posture).toBe("BALANCED");
+    expect(eng.cop("BLUE").mainEffort).toBeUndefined();
+  });
+
+  it("a human commander's direct order holds against AI re-tasking", () => {
+    const eng = Engine.create(scn, 4);
+    const unit = eng.cop("BLUE").units.find((u) => u.domain === "SEA")!;
+    submit(eng, "blue.nca", "HUMAN", [{ type: "FRAGO", to: unit.id, task: "HOLD" }]);
+    eng.step();
+    expect(eng.cop("BLUE").units.find((u) => u.id === unit.id)!.held).toBe(true);
+    submit(eng, "blue.mcc", "RULES", [{ type: "FRAGO", to: unit.id, task: "PATROL", point: [unit.lat, unit.lon + 1] }]);
+    eng.step();
+    const ev = eng.drain().events.filter((e) => e.type === "ORDER").pop()!;
+    expect(ev.factors).toMatchObject({ applied: 0, rejected: 1 });
   });
 });
 

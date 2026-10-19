@@ -1,7 +1,7 @@
 // Utility-AI fallback policies, one per role. Each scores a fixed menu of actions from COP features
 // and returns an order batch with a short structured rationale (spec §3, impl. §5).
 import { ESCALATION_LADDER, type CopForAgents, type Order, type OrderBatch, type Role, type UnitSummary } from "@sentinel/protocol";
-import { changes, focusObjective, hostile, hoursWindow, km, nearestTrack, ownObjectives, toward, valueOf } from "./util";
+import { changes, focusObjective, hostile, hoursWindow, km, nearestTrack, ownObjectives, postureOf, toward, valueOf } from "./util";
 
 export interface PolicyResult extends OrderBatch {
   coas?: { name: string; score: number; summary: string }[];
@@ -11,6 +11,7 @@ type Policy = (cop: CopForAgents) => PolicyResult;
 
 const units = (cop: CopForAgents, pred: (u: UnitSummary) => boolean) => cop.units.filter(pred);
 const push = (orders: Order[], u: UnitSummary, o: Omit<Order, "to">) => {
+  if (u.held) return; // following the commander's direct order
   const full = { ...o, to: u.id } as Order;
   if (changes(u, full) && orders.length < 24) orders.push(full);
 };
@@ -31,7 +32,7 @@ const nca: Policy = (cop) => {
     { name: "HOLD", score: 0.25 },
     {
       name: "ESCALATE",
-      score: (cop.enemyEscalation > esc ? 0.45 : 0) + (held < total && cop.will > 55 && esc < 3 ? 0.35 : 0) - (esc >= 4 ? 0.6 : 0) - (cop.will < 40 ? 0.4 : 0) - (esc >= 5 ? 5 : 0),
+      score: (cop.enemyEscalation > esc ? 0.45 : 0) + (held < total && cop.will > 55 && esc < 3 ? 0.35 : 0) - (esc >= 4 ? 0.6 : 0) - (cop.will < 40 ? 0.4 : 0) - (esc >= 5 ? 5 : 0) + postureOf(cop).escalateBias,
     },
     {
       name: "DEESCALATE",
@@ -56,12 +57,13 @@ const jfc: Policy = (cop) => {
   const sea = focusObjective(cop, "SEA");
   const seaThreat = hostile(cop).filter((t) => t.believedDomain === "SEA").reduce((s, t) => s + valueOf(t), 0);
   const landThreat = hostile(cop).filter((t) => t.believedDomain === "LAND").reduce((s, t) => s + valueOf(t), 0);
-  const supported = seaThreat > landThreat ? "MARITIME" : "LAND";
+  const main = cop.mainEffort ? ownObjectives(cop).find((o) => o.id === cop.mainEffort) : undefined;
+  const supported = main && main.domain !== "ANY" ? (main.domain === "SEA" ? "MARITIME" : "LAND") : seaThreat > landThreat ? "MARITIME" : "LAND";
   const orders: Order[] = [{ type: "PRIORITY", to: `${cop.faction.toLowerCase()}.jfc`, note: `${supported} supported; focus ${supported === "MARITIME" ? sea?.name ?? "sea control" : land?.name ?? "land objectives"}` }];
   // Persistent ISR over the focus objective.
   const focus = (supported === "MARITIME" ? sea : land) ?? land ?? sea;
   if (focus) for (const u of units(cop, (x) => x.cls === "hale_isr" || x.cls === "aewc")) push(orders, u, { type: "FRAGO", task: "ISR", point: toward(cop.hq ?? focus.center, focus.center, Math.max(0, km(cop.hq ?? focus.center, focus.center) - 120)), window_sim_h: hoursWindow(cop, 10) });
-  return { orders, rationale: `${supported} is the supported component: sea threat value ${seaThreat} vs land ${landThreat}. ISR assets cover ${focus?.name ?? "the theater"}.`, confidence: 0.6 };
+  return { orders, rationale: `${supported} is the supported component: ${main ? `commander's main effort is ${main.name}` : `sea threat value ${seaThreat} vs land ${landThreat}`}. ISR assets cover ${focus?.name ?? "the theater"}.`, confidence: 0.6 };
 };
 
 const lcc: Policy = (cop) => {
@@ -71,14 +73,14 @@ const lcc: Policy = (cop) => {
   let note = "No land objective.";
   if (obj) {
     const fr = forceRatio(cop, obj.center, obj.radiusKm * 2.5);
-    const attack = fr.ratio >= 1.5 && cop.escalation >= 3;
+    const attack = fr.ratio >= postureOf(cop).attackRatio && cop.escalation >= 3;
     const tgt = nearestTrack(hostile(cop), obj.center, (t) => t.believedDomain === "LAND");
     for (const u of combat) {
       if (u.cls === "artillery_bn") push(orders, u, { type: "FRAGO", task: "MOVE", point: toward(obj.center, [u.lat, u.lon], 35) });
       else if (attack && tgt) push(orders, u, { type: "FRAGO", task: "ATTACK", target: tgt.id, point: [tgt.lat, tgt.lon] });
       else push(orders, u, { type: "FRAGO", task: "DEFEND", point: toward(obj.center, [u.lat, u.lon], Math.min(obj.radiusKm * 0.5, 20)) });
     }
-    note = `Force ratio at ${obj.name}: ${fr.ratio.toFixed(2)} (own ${fr.own.toFixed(0)} vs enemy ${fr.enemy.toFixed(0)}). ${attack ? "Attack" : "Defend and build combat power"}${cop.escalation < 3 ? " (rung below 3 forbids land attack)" : ""}.`;
+    note = `Force ratio at ${obj.name}: ${fr.ratio.toFixed(2)} (own ${fr.own.toFixed(0)} vs enemy ${fr.enemy.toFixed(0)}). ${attack ? "Attack" : "Defend and build combat power"}${cop.escalation < 3 ? " (rung below 3 forbids land attack)" : cop.posture === "DEFENSIVE" ? " (defensive posture)" : ""}.`;
   }
   // Convoys resupply the lowest-supplied combat unit; air defense covers the main effort.
   const needy = [...combat].sort((a, b) => a.supplyDays - b.supplyDays)[0];
@@ -95,7 +97,7 @@ const mcc: Policy = (cop) => {
   const ships = hostile(cop).filter((t) => t.believedDomain === "SEA");
   for (const u of units(cop, (x) => x.domain === "SEA" || x.cls === "usv" || x.cls === "uuv")) {
     switch (u.cls) {
-      case "csg": push(orders, u, { type: "OPORD", task: "PATROL", point: toward(obj.center, home, 220) }); break;
+      case "csg": push(orders, u, { type: "OPORD", task: "PATROL", point: toward(obj.center, home, postureOf(cop).carrierStandoffKm) }); break;
       case "destroyer": case "frigate": case "usv": push(orders, u, { type: "OPORD", task: "PATROL", point: toward(obj.center, home, u.cls === "destroyer" ? 60 : 20) }); break;
       case "ssn": case "ssk": {
         const t = [...ships].sort((a, b) => valueOf(b) - valueOf(a))[0];
@@ -120,7 +122,7 @@ const mcc: Policy = (cop) => {
       case "mcm_group": case "uuv": push(orders, u, { type: "OPORD", task: "PATROL", point: obj.center }); break;
     }
   }
-  return { orders, rationale: `Sea control around ${obj.name}: ${ships.length} hostile surface/subsurface tracks; screen forward, carrier held back ${220} km.`, confidence: 0.6 };
+  return { orders, rationale: `Sea control around ${obj.name}: ${ships.length} hostile surface/subsurface tracks; screen forward, carrier held back ${postureOf(cop).carrierStandoffKm} km.`, confidence: 0.6 };
 };
 
 const acc: Policy = (cop) => {
@@ -132,7 +134,8 @@ const acc: Policy = (cop) => {
   const threats = hostile(cop);
   const strikeTargets = threats
     .filter((t) => (t.believedDomain === "SEA" && cop.escalation >= 2) || (t.believedDomain === "LAND" && cop.escalation >= 3))
-    .filter((t) => t.quality === "IDENTIFIED" || t.quality === "TRACKED" || t.quality === "CLASSIFIED")
+    .filter((t) => t.quality === "IDENTIFIED" || t.quality === "TRACKED" || (t.quality === "CLASSIFIED" && postureOf(cop).strikeClassified))
+    .filter((t) => !postureOf(cop).strikeNearOwnOnly || ownObjectives(cop).some((o) => km(o.center, [t.lat, t.lon]) < o.radiusKm * 2.5))
     .sort((a, b) => valueOf(b) - valueOf(a));
   const hv = cop.units.find((u) => u.cls === "csg") ?? cop.units.find((u) => u.cls === "hq");
   let s = 0;
