@@ -4,7 +4,7 @@ A multi-domain, multi-agent wargame for teaching and studying how joint operatio
 
 **Live:** https://warfare-sentinel.troche.workers.dev (Cloudflare Workers free tier)
 
-![Global Theater Map over the Bass Strait](docs/images/theater-map.png)
+![The command post during Strait Crisis: map, staff briefing with decision cards, status board and the Ask bar](docs/images/command-post.png)
 
 The full design is in [docs/specs.md](docs/specs.md) (the system specification) and [docs/implementation.md](docs/implementation.md) (the Cloudflare free-tier plan). This README covers what was built, how to run it, and where the build differs from the plan.
 
@@ -12,13 +12,40 @@ The full design is in [docs/specs.md](docs/specs.md) (the system specification) 
 
 ## What you can do
 
+- **Command a side.** Pick a scenario, a side, an opponent (the computer, language-model commanders, or a friend online) and a difficulty, then take command. Your AI staff run the forces and report to you; a prioritized briefing, decision cards, one-click plays and an "Ask your staff" bar (typed or spoken) let you make the strategic calls. Works on desktop and phone browsers.
 - **Play locally.** No account or server is needed. The engine and rule-based agents run in your browser. You can rewind and branch from any moment ("what if Blue had waited 6 hours?"), and replay is deterministic.
 - **Host online (Profile B, default).** The engine runs in the host's browser. Cloudflare hosts the session hub, the fog-of-war routing, the LLM commanders on Workers AI, the event log and the AAR. Other players join as Blue or Red with a join code and see only their own faction's picture.
 - **Edge-authoritative (Profile A).** The engine runs inside a Durable Object in alarm-sized slices, with 10-minute ticks. It suits scenarios of up to about 300 entities.
 - **Take any seat.** Seats can be taken at runtime, for example the Blue Air Component. You then issue orders with the same form and schema the agents use, and hand the seat back when done.
 - **Batch runs.** Monte Carlo mode runs N seeds in a pool of Web Workers and shows the outcome distributions.
 
-### The twelve consoles
+### The command post
+
+The default way to play. One screen, built around the commander's decisions:
+
+| Area | What it does |
+|------|--------------|
+| Landing | The theater map from the first second, with your numbered objectives, the enemy's aims and how to win, before you start |
+| Top bar | Mission, victory points for both sides, clock and time left, play/pause and named speeds (Slow, Normal, Fast, Max) |
+| Map | Your forces, enemy contacts with uncertainty rings, objectives labelled with their status. Opens framed on the theater; collapsible legend with layer switches |
+| Staff briefing | Bottom line first, then decision cards (options, consequences, a staff recommendation), then reports ranked by severity and merged when repeated |
+| Actions | Commander's intent (main effort and posture), the escalation ladder, and nine plays that are disabled with a reason when they cannot work |
+| Status board | Objectives, score, forces, will, escalation, supply, comms, intel; each tile opens the expert console behind it |
+| Ask your staff | "How are we doing?", "Where is the enemy fleet?", "Strike the top threat", "Go defensive". Answers come from your own picture; orders wait for a confirm click |
+
+![Landing page: the theater map with your objectives, and the game setup](docs/images/landing.png)
+
+Difficulty sets pace and pressure: **Recruit** pauses for every decision and explains every option, **Officer** pauses only for critical ones (the staff act on their advice after 3 simulated hours), **Commander** never pauses. A first-run introduction and a guided tour explain the screen. Everything the briefing and Ask use is derived from your faction's view, never ground truth.
+
+<img src="docs/images/command-post-phone.png" alt="The command post on a phone: map above, briefing sheet with the commander's intent card below" width="260">
+
+The engine side of this is small and deterministic: an `INTENT` order (posture and main effort) that every rule and LLM role plans within, and a 12-hour hold on units a human ordered directly, so the AI staff never undo the commander.
+
+### The twelve expert consoles
+
+Open them from the command post menu ("Expert consoles"), from any status tile, or play as referee from the landing page ("Referee sandbox").
+
+![Global Theater Map over the Bass Strait](docs/images/theater-map.png)
 
 | # | Console | Concept |
 |---|---------|---------|
@@ -75,7 +102,8 @@ packages/engine        deterministic World Engine: movement (A* on H3), sensing,
 packages/agents-rules  utility-AI policy per role (NCA … J6) and cadence scheduler
 scenarios/             starter scenarios + validation tests
 apps/edge              Worker, SessionDO, FactionAgent, UsageDO, D1 migrations, wrangler.jsonc
-apps/console           React + Vite SPA, engine Web Worker, Monte Carlo workers, Playwright e2e
+apps/console           React + Vite SPA: landing and command post (src/command, src/game), expert consoles,
+                       engine Web Worker, Monte Carlo workers, Playwright e2e
 tools/                 scenario generator, Profile A slice benchmark
 ```
 
@@ -105,7 +133,7 @@ Workers AI bindings always call the remote service, even in `wrangler dev`. The 
 ## Testing
 
 ```bash
-pnpm -r typecheck && pnpm -r test          # 36 unit tests across 5 packages
+pnpm -r typecheck && pnpm -r test          # 56 unit tests across 6 packages
 pnpm --filter @sentinel/console e2e        # Playwright, headless Chromium (builds and serves the console)
 E2E_BASE_URL=https://warfare-sentinel.troche.workers.dev pnpm --filter @sentinel/console e2e   # against a deployment
 pnpm bench:slices                          # Profile A slice timings per scenario
@@ -113,11 +141,12 @@ pnpm bench:slices                          # Profile A slice timings per scenari
 
 Coverage:
 
-- **Engine:** byte-identical logs for the same seed and orders; different seeds diverge; sliced runs equal whole-tick runs; snapshot and restore continue identically; deterministic maths matches `Math`; fog-of-war views contain no enemy entities or truth links; an AAR whose turning points link to real events.
+- **Engine:** byte-identical logs for the same seed and orders; different seeds diverge; sliced runs equal whole-tick runs; snapshot and restore continue identically; deterministic maths matches `Math`; fog-of-war views contain no enemy entities or truth links, and events in a faction view name only that faction's own units and tracks; an AAR whose turning points link to real events.
 - **Agents:** every role's output passes the order schema; J5 ranks its courses of action; seats held by humans are skipped; recorded model outputs (clean, prose-wrapped, truncated, invalid) either parse or fall back cleanly; the lenient parser repairs common model slips.
 - **Edge:** a static check that `FactionAgent` never imports ground-truth types; join tokens round-trip and reject tampering and expiry.
 - **Scenarios:** catalogue and guardrail validation, and coastline placement checks.
-- **End-to-end:** the lobby; a running session with the globe and every console; Blue-only symbols in the Blue view; rewind; Monte Carlo.
+- **Command post:** the briefing ranks and merges reports and never names unseen enemy units; decision cards offer only possible options; the Ask interpreter answers, finds units and turns orders into confirmable actions; plays yield schema-valid orders or a plain reason; `INTENT` is commander-only and visible only to its own side; human direct orders hold against AI re-tasking.
+- **End-to-end:** the landing page with the map and the mission; a full command game (intent, briefing, Ask, drill-down, fog of war on the commander's map); the first-run intro and tour; a phone viewport with no sideways scrolling; the lobby; a referee session with the globe and every console; Blue-only symbols in the Blue view; rewind; Monte Carlo.
 
 ## Deploying (Cloudflare free tier)
 

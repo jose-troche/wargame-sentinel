@@ -98,6 +98,8 @@ LLM reasoning sits in the top three tiers; tactical controllers run fast behavio
 
 - An agent sees only its faction's COP filtered to its echelon; ground truth is never exposed outside the White cell.
 - Every agent seat can be taken over by a human at runtime, and handed back.
+- **Commander's intent.** The NCA (or a human in that seat) issues an `INTENT` order with a posture (aggressive, balanced or defensive) and a main-effort objective. Every role plans within it: the main effort becomes the focus objective, and the posture sets how much risk the staff accept (the force ratio needed to attack, how far forward the carrier patrols, which contacts may be struck).
+- **Direct orders hold.** A unit given an order by a human holds it for at least 12 simulated hours (or the order's window). The engine rejects AI orders to that unit until then, so the staff never undo the commander.
 - Each agent has a reasoning budget (LLM calls per sim-day) and degrades gracefully to its rule-based fallback when the budget is spent or the model is unavailable.
 - Agents must justify each order with a short structured rationale, which the console displays.
 
@@ -113,7 +115,7 @@ The order still arrives, but later; if no path survives, the unit keeps executin
 
 | Family | Direction | Examples | Delivered via |
 | --- | --- | --- | --- |
-| Orders | Down | OPORD (full plan), FRAGO (change), ATO (air tasking), Space Tasking Order, ROE update | Simulated C2 network |
+| Orders | Down | OPORD (full plan), FRAGO (change), ATO (air tasking), Space Tasking Order, ROE update, commander's INTENT | Simulated C2 network |
 | Reports | Up | SITREP, SPOTREP, INTSUM, LOGSTAT, BDA (battle damage assessment) | Simulated C2 network |
 | Coordination | Lateral | Support request, deconfliction, airspace control, fires clearance | Simulated C2 network |
 | Adjudication | White → all | Detection, engagement result, entity destroyed, weather change | Direct (out of band) |
@@ -235,7 +237,30 @@ Here S is the sensor strength band, σ the target signature band for that sensor
 
 ## 7. Web console
 
-The web console is a single-page application with 12 graphical consoles arranged as dockable panels around a central globe; each console exists to make one concept visible, and every console can switch between a faction's view (fog of war) and the White cell's ground truth.
+The console has two faces over the same engine. Players get a **command post**: one screen built around the decisions a commander makes, with the staff filtering the flood of reports. Referees, analysts and curious commanders get the **expert layout**: 12 graphical consoles arranged as dockable panels around a central globe, each making one concept visible and each able to switch between a faction's view (fog of war) and the White cell's ground truth.
+
+**The game**
+
+- The player commands one side (Blue or Red) of a fictional crisis. Their AI staff run the forces and report to them; the player decides. The opponent is the computer (rule-based, in the browser), language-model commanders (online) or another person (online, via an invite link).
+- Objectives are stated before play: on the landing page the map shows the theater, the player's numbered objectives and the enemy's aims, with the win conditions in one sentence. A side wins when the enemy's national will reaches zero, or by leading on victory points (objective-hours × weight + national will) when time runs out; reaching escalation rung 6 is a catastrophe for both.
+- The levers are strategic: commander's intent (main effort and posture), the escalation ladder, nine one-click **plays** (surge surveillance, air cover, reinforce, push the fleet, assault, strike the top threat, jam and hack, resupply, pull back damaged units) and direct orders to single units (select, choose an order, tap the map). Every play is an ordinary order batch through `applyOrderBatch` and the C2 network.
+- Difficulty levels set the pace and the pressure: **Recruit** (slow, pauses for every decision, explains each option, cautious opponent), **Officer** (normal pace, pauses only for critical decisions, the staff act on their own recommendation after 3 simulated hours) and **Commander** (no pauses, 1.5-hour decision windows, aggressive opponent). Speeds are named by how long a simulated hour takes (Slow ≈ 20 s, Normal ≈ 6 s, Fast ≈ 2 s, Max ≈ 1 s).
+
+**The command post**
+
+| Area | What it shows | Notes |
+| --- | --- | --- |
+| Top bar | Mission (objectives in a word each), victory points for both sides, clock and time left, play/pause and named speeds | "Paused: decision needed" when the game waits for the commander |
+| Map | Own forces, enemy contacts with uncertainty rings, numbered objectives labelled with their status, jamming zones, control shading | Opens framed on the whole theater; a recenter button and `C` restore it. Legend with layer switches, collapsible |
+| Staff briefing | Bottom line up front, then decision cards, then staff reports ranked by severity | Reports of the same kind in the same place merge ("×3"); routine traffic is dropped; refreshed once a second |
+| Actions | Intent, escalation ladder, plays | Plays that cannot work now are disabled with the reason |
+| Status board | Objectives, score, forces, will, escalation, supply, comms, intel | Each tile opens the expert console behind it in a drawer |
+| Ask your staff | Typed or spoken questions and orders | Answers locally from the faction's own picture; orders wait for a confirm click |
+
+- **The prioritizer.** A pure function of one faction's view (never ground truth) turns events into reports with a severity (critical, warning, good news, update), a staff category (intelligence, land, maritime, air, space, cyber/EW, logistics, communications, strategy), a plain-language title that says where ("40 km NE of Port Haldane"), and a link to the map and to the evidence. It also raises conditions no single event announced: enemy contacts inside an objective, units below one day of supply, units out of contact.
+- **Decision cards.** At moments that need the commander (intent at the start, enemy escalation, an objective contested or lost, a high-value target identified, supply running out, a ceasefire offer, comms breaking down, will falling fast) the staff present two or three options, the consequence of each, and a recommendation. Options appear only when they are possible.
+- **Communication.** Every severity and category has its own icon as well as a color (colorblind-safe), numbers use tabular figures, panels never move under the reader, and spoken alerts are available. A first-run introduction explains the purpose, how to win, the screen and the controls, followed by an optional guided tour. Keys: Space, 1–4, `/`, `M`, `C`, `?`, Esc.
+- **Phones.** The map fills the screen and the briefing, status, actions and Ask open as bottom sheets from a tab bar.
 
 **Consoles and the concepts they illustrate**
 
@@ -254,7 +279,7 @@ The web console is a single-page application with 12 graphical consoles arranged
 | 11 | Agent Reasoning Console | Live agent hierarchy, message trace, each decision's rationale, LLM vs rule-based badge, budget meter | Explainable multi-agent decision-making |
 | 12 | Strategic Dashboard | Escalation ladder, national will curves, objective status, loss-exchange ratios | How tactical events translate into strategic outcomes |
 
-**Shared console features**
+**Expert consoles: shared features**
 
 - **Timeline scrubber** with play, pause, speed (1x–3600x), jump to event and branch from any point ("what if Blue had waited 6 hours?").
 - **Linked selection**: selecting a unit anywhere highlights it in every console, including its messages and its kill-chain lanes.
